@@ -5,11 +5,11 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Secret key & debug from environment (Heroku will manage them)
+# Secret key & debug
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-temp-secret-key')
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)  # Default False for production
 
-# Allow all hosts (set your domain later for security)
+# Render gives a host dynamically
 ALLOWED_HOSTS = ['*']
 
 # Installed apps
@@ -20,13 +20,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'myapp',  # replace with your app name
+    'myapp',
 ]
 
-# Middleware (Whitenoise added for static files)
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # must be right after SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -40,7 +40,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # optional if using templates
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -55,16 +55,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
-# --- DATABASE CONFIGURATION ---
-# Default: SQLite (for local development)
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-# Switch to PostgreSQL if DATABASE_URL is provided (on Heroku)
 DATABASE_URL = config('DATABASE_URL', default=None)
 if DATABASE_URL:
     DATABASES['default'] = dj_database_url.config(
@@ -73,7 +70,7 @@ if DATABASE_URL:
         ssl_require=True
     )
 
-# Password validation
+# Password validators
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -87,12 +84,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JS, Images)
+# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Whitenoise for static file compression & caching
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
