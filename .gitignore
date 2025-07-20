@@ -1,19 +1,22 @@
-# Python
+# Byte-compiled / cache files
 __pycache__/
 *.py[cod]
+
+# SQLite database
 *.sqlite3
+db.sqlite3
+
+# Logs
 *.log
 
-# Environment
+# Environment variables
 .env
 
 # Django static files
 staticfiles/
 
-# VS Code
+# VS Code settings
 .vscode/
-.env
-__pycache__/
-*.pyc
-db.sqlite3
-staticfiles/
+
+# macOS system files
+.DS_Store

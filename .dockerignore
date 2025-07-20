@@ -1,0 +1,29 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+
+# Environment
+.env
+*.env
+
+# Python virtual environments
+venv/
+env/
+
+# Django static files
+staticfiles/
+
+# SQLite database (optional if you're not containerizing the DB)
+*.sqlite3
+db.sqlite3
+
+# Editor folders
+.vscode/
+.idea/
+
+# OS / system files
+.DS_Store
+Thumbs.db
