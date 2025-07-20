@@ -1,6 +1,7 @@
 from django import forms
+from .models import FormData
 
-class SimpleForm(forms.Form):
-    name = forms.CharField(label='Your Name', max_length=100)
-    email = forms.EmailField(label='Email')
-    message = forms.CharField(label='Message', widget=forms.Textarea)
+class FormDataForm(forms.ModelForm):
+    class Meta:
+        model = FormData
+        fields = ['name', 'table_no', 'note']

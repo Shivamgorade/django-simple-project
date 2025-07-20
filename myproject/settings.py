@@ -1,18 +1,17 @@
-# myproject/settings.py
-
 import os
 from pathlib import Path
 import dj_database_url
-from decouple import config, Csv
+from decouple import config
 
+# ✅ Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ✅ Security
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-temp-key')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']  # Adjust this for production
 
-# ✅ Installed Apps
+# ✅ Installed apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -20,13 +19,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'myapp',  # Your app name
+    'myapp',  # Your application
 ]
 
 # ✅ Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Enable static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serve static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -35,13 +34,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ✅ Root URL configuration
 ROOT_URLCONF = 'myproject.urls'
 
 # ✅ Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Custom templates directory
+        'DIRS': [BASE_DIR / 'templates'],  # Your templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,9 +54,10 @@ TEMPLATES = [
     },
 ]
 
+# ✅ WSGI
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
-# ✅ Database: SQLite (Local) / PostgreSQL (Render)
+# ✅ Database: Use SQLite by default, switch to PostgreSQL on Render
 USE_POSTGRES = config('USE_POSTGRES', default=False, cast=bool)
 
 if USE_POSTGRES:
@@ -75,7 +76,7 @@ else:
         }
     }
 
-# ✅ Password Validation
+# ✅ Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -85,15 +86,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # ✅ Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# ✅ Static Files
+# ✅ Static files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [BASE_DIR / 'static']  # Local dev: where your static folder lives
+STATIC_ROOT = BASE_DIR / 'staticfiles'    # Where static files go when you run collectstatic
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ✅ Default Field Type
+# ✅ Default primary key type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

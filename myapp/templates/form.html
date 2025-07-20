@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Form</title>
+    {% load static %}
+    <title>Submit Form</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}">
+
 </head>
 <body>
-    <h2>Simple Form</h2>
+    <h1>Submit Inspection</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

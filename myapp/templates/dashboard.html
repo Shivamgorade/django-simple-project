@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    <h2>Inspection Records</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Table No</th>
+                <th>Note</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in data %}
+            <tr>
+                <td>{{ record.name }}</td>
+                <td>{{ record.table_no }}</td>
+                <td>{{ record.note }}</td>
+                <td>{{ record.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
