@@ -29,3 +29,235 @@
     </table>
 </body>
 </html>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspection Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+    <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+    }
+
+    header {
+      background-color: #d90429;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+    }
+
+    .container {
+      padding: 2rem;
+    }
+
+    .filters,
+    .summary {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 0.75rem;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #edf2f7;
+    }
+
+    canvas {
+      max-width: 100%;
+      margin-top: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>BOSCH - ABS10M First Piece Inspection Dashboard</header>
+  <div class="container">
+    <!-- Filter Section -->
+    <div class="filters">
+      <input type="date" class="card" />
+      <select class="card">
+        <option>Line No</option>
+        <option>10M Line#01</option>
+        <option>10M Line#02</option>
+        <option>10M Line#03</option>
+      </select>
+      <select class="card">
+        <option>Shift</option>
+        <option>Shift A</option>
+        <option>Shift B</option>
+        <option>Shift C</option>
+      </select>
+    </div>
+
+    <!-- Total Inspection Summary Title -->
+    <div class="section-title">Total Inspection Summary</div>
+    <div class="summary">
+      <div class="card">
+        <strong>10M Line #01</strong>
+        <p>300</p>
+      </div>
+      <div class="card">
+        <strong>10M Line #02</strong>
+        <p>400</p>
+      </div>
+      <div class="card">
+        <strong>10M Line #03</strong>
+        <p>500</p>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary">
+      <div class="card">
+        <strong>Total Inspections</strong>
+        <p>2400</p>
+      </div>
+      <div class="card">
+        <strong>✅ OK</strong>
+        <p>85%</p>
+      </div>
+      <div class="card">
+        <strong>❌ NOK</strong>
+        <p>10%</p>
+      </div>
+      <div class="card">
+        <strong>⚪ N/A</strong>
+        <p>5%</p>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <canvas id="statusChart"></canvas>
+
+    <!-- Data Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Line</th>
+            <th>Shift</th>
+            <th>Part No</th>
+            <th>Part Type</th>
+            <th>Supervisor</th>
+            <th>DMC No</th>
+            <th>Station</th>
+            <th>Position</th>
+            <th>Depth</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-07-20</td>
+            <td>1</td>
+            <td>A</td>
+            <td>ABS10M</td>
+            <td>Type A</td>
+            <td>Mr. Singh</td>
+            <td>100818</td>
+            <td>ST.15</td>
+            <td>501</td>
+            <td>1.10</td>
+            <td>OK</td>
+          </tr>
+          <tr>
+            <td>2025-07-20</td>
+            <td>1</td>
+            <td>A</td>
+            <td>ABS10M</td>
+            <td>Type A</td>
+            <td>Mr. Singh</td>
+            <td>100818</td>
+            <td>ST.15</td>
+            <td>502</td>
+            <td>1.20</td>
+            <td>OK</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['ST.15', 'ST.20', 'ST.25', 'ST.30', 'ST.40', 'ST.45', 'ST.85'],
+        datasets: [
+          {
+            label: 'OK',
+            data: [40, 38, 35, 30, 25, 20, 18],
+            backgroundColor: '#38a169'
+          },
+          {
+            label: 'NOK',
+            data: [5, 4, 3, 2, 2, 1, 1],
+            backgroundColor: '#e53e3e'
+          },
+          {
+            label: 'N/A',
+            data: [2, 3, 1, 1, 0, 0, 0],
+            backgroundColor: '#a0aec0'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top'
+          },
+          title: {
+            display: true,
+            text: 'Station-wise Status Overview'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

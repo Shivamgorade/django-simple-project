@@ -1,12 +1,9 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
-
-from myapp.views import dashboard_view, form_view
+from django.urls import include, path
 
 urlpatterns = [
-    path('', form_view, name='form_view'),
-    path('dashboard/', dashboard_view, name='dashboard'),
+    path('', include('myapp.urls')),  # All routing handled in myapp.urls
 ]
 
 if settings.DEBUG:

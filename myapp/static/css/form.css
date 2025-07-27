@@ -1,23 +1,369 @@
-body {
-    background-color: #f0f8ff;
-    font-family: Arial, sans-serif;
-}
+
 form {
     margin: 50px auto;
-    width: 800px;
+    width: 1000px;
     padding: 20px;
     border-radius: 10px;
-    background: #ffffff;
+    background: #f8f8f8;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 h1 {
     text-align: center;
 }
-button {
-    background-color: #007BFF;
-    color: white;
-    padding: 10px;
-    border: none;
-    width: 100%;
-    border-radius: 5px;
+
+
+body {
+
+  margin: 0;
+
+  font-family: "Segoe UI", sans-serif;
+
+  background: #eef3f7;
+
+  color: #333;
+
+}
+
+header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 24px;
+
+}
+
+ 
+
+.header-left {
+
+  text-align: left;
+
+}
+
+ 
+
+.header-left h1 {
+
+  margin: 0;
+
+  font-size: 28px;
+
+}
+
+ 
+
+.header-left p {
+
+  margin: 4px 0 0;
+
+  font-size: 14px;
+
+  color: #555;
+
+  text-align: center; /* Ensures the version text aligns left */
+
+}
+
+.header-right .bosch-logo {
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  color: #c00; /* Bosch red */
+
+  text-transform: uppercase;
+
+}
+
+.container {
+
+  max-width: 960px;
+
+  margin: 0 auto;
+
+  padding: 20px;
+
+}
+
+.step-number {
+
+  font-weight: 2px;
+
+  margin-right: 6px;
+
+}
+
+ 
+
+.required {
+
+  color: red;
+
+  font-weight: normal;
+
+}
+
+input[type="number"].invalid {
+
+  border-color: red;
+
+  background-color: #ffe5e5;
+
+}
+
+ 
+
+
+
+ 
+
+/* Red color for invalid control limit line */
+
+.faded-line.invalid {
+
+  color: red !important;
+
+}
+
+ 
+
+header {
+
+  text-align: center;
+
+  margin-bottom: 30px;
+
+}
+
+ 
+
+header h1 {
+
+  margin: 0;
+
+  color: #c00;
+
+}
+
+ 
+
+header p {
+
+  color: #666;
+
+}
+
+ 
+
+.card {
+
+  background: #fff;
+
+  border-radius: 10px;
+
+  padding: 20px;
+
+  margin-bottom: 24px;
+
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+
+}
+
+ 
+
+.card h2 {
+
+  color: #333;
+
+  border-left: 5px solid #c00;
+
+  padding-left: 10px;
+
+  margin-bottom: 20px;
+
+}
+
+ 
+
+.grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  gap: 16px;
+
+}
+
+ 
+
+.form-control {
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+ 
+
+label {
+
+  font-weight: 600;
+
+  margin-bottom: 6px;
+
+}
+
+ 
+
+label span {
+
+  color: #c00;
+
+}
+
+ 
+
+input,
+
+select {
+
+  padding: 10px;
+
+  border: 1px solid #ccc;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+
+}
+
+ 
+
+.status-group {
+
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 4px;
+
+}
+
+ 
+
+.status-group label {
+
+  font-weight: 500;
+
+}
+
+.form-row {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+
+}
+
+ 
+
+.form-control {
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+ 
+
+.full-width {
+
+  width: 100%;
+
+}
+
+ 
+
+.status-group {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 6px;
+
+}
+
+ 
+
+/* Tools info line above DMC No. */
+
+.tools-info {
+
+  font-size: 14px;
+
+  color: rgba(51, 51, 51, 0.5); /* low opacity */
+
+  margin-bottom: 12px;
+
+  white-space: nowrap; /* keep in one line */
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+}
+
+ 
+
+/* Faded lines for specification and control limit */
+
+.faded-line {
+
+  color: rgba(51, 51, 51, 0.5); /* low opacity */
+
+  font-size: 14px;
+
+  margin: 6px 0 12px;
+
+}
+button[type="submit"] {
+  background-color: #65b0fc; /* Bosch blue */
+  color: #ffffff;
+  padding: 14px 0;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Segoe UI", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); /* match .card */
+  margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+  background-color: #498603;
+  transform: translateY(-2px);
+}
+
+button[type="submit"]:active {
+  background-color: #003f88;
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
