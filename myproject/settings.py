@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ✅ Security
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-temp-key')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = ['*']  # Adjust this for production
+ALLOWED_HOSTS = ['myapp.onrender.com']  # Adjust this for production
 
 # ✅ Installed apps
 INSTALLED_APPS = [
