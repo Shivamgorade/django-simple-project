@@ -1,5 +1,6 @@
 import os
 from turtle import pd
+import pandas as pd
 import openpyxl
 from django.shortcuts import render, redirect
 from django.conf import settings
@@ -168,6 +169,17 @@ def form_view(request):
 def dashboard_view(request):
     excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet.xlsx')
     
+    if os.path.exists(excel_path):
+        df = pd.read_excel(excel_path, engine='openpyxl')
+        data = df.to_dict(orient='records')  # Convert DataFrame to list of dictionaries
+    else:
+        data = []
+
+    return render(request, 'dashboard.html', {'data': data})
+
+def dashboard_view(request):
+    excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')  # ✅ Corrected
+
     if os.path.exists(excel_path):
         df = pd.read_excel(excel_path, engine='openpyxl')
         data = df.to_dict(orient='records')  # Convert DataFrame to list of dictionaries
