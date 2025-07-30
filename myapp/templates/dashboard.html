@@ -1,263 +1,889 @@
 <!DOCTYPE html>
-<html>
-<head>
-    {% load static %}
-    <title>Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
-</head>
-<body>
-    <h2>Inspection Records</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Table No</th>
-                <th>Note</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in data %}
-            <tr>
-                <td>{{ record.name }}</td>
-                <td>{{ record.table_no }}</td>
-                <td>{{ record.note }}</td>
-                <td>{{ record.timestamp }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
-
-
-
-<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inspection Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
-    <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABS10M Inspection Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f5f7fa;
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
     }
 
     header {
-      background-color: #d90429;
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
       color: white;
-      padding: 1rem 2rem;
-      font-size: 1.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      letter-spacing: 0.5px;
     }
 
     .container {
-      padding: 2rem;
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
     }
 
-    .filters,
-    .summary {
+    .filters {
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
 
-    .card {
-      background: white;
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    .filters input,
+    .filters select {
       flex: 1;
-      min-width: 150px;
-    }
-
-    .table-container {
-      overflow-x: auto;
-      background: white;
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: 0.75rem;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background-color: #edf2f7;
-    }
-
-    canvas {
-      max-width: 100%;
-      margin-top: 2rem;
+      min-width: 180px;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 1rem;
     }
 
     .section-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 2rem 0 1rem;
+      color: #1e3c72;
     }
+
+    .summary {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .summary-card {
+      flex: 1;
+      min-width: 220px;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #444;
+    }
+
+    .summary-card p {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #1e3c72;
+      margin: 0;
+    }
+
+   
+    //-------------------style for the chart 
+
+.chart-container {
+  height: 250px;
+  position: relative;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: #fff;
+  padding: 16px 16px;
+  border-radius: 16px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+
+.card p {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #555;
+}
+
+.chart-container {
+  position: relative;
+  height: 200px; /* reduced from 260px */
+  margin-top: 16px;
+}
+
+.notation {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #444;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  user-select: none;
+}
+
+.notation div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.circle.red { background-color: red; }
+.circle.green { background-color: green; }
+
+
+
   </style>
 </head>
+
 <body>
-  <header>BOSCH - ABS10M First Piece Inspection Dashboard</header>
+  <header>📋 ABS10M First Piece Inspection Dashboard</header>
   <div class="container">
+
     <!-- Filter Section -->
     <div class="filters">
-      <input type="date" class="card" />
-      <select class="card">
-        <option>Line No</option>
+      <input type="date" />
+      <select>
+        <option disabled selected>Line No</option>
         <option>10M Line#01</option>
         <option>10M Line#02</option>
         <option>10M Line#03</option>
       </select>
-      <select class="card">
-        <option>Shift</option>
+      <select>
+        <option disabled selected>Shift</option>
         <option>Shift A</option>
         <option>Shift B</option>
         <option>Shift C</option>
       </select>
     </div>
 
-    <!-- Total Inspection Summary Title -->
-    <div class="section-title">Total Inspection Summary</div>
+    <!-- Summary Section -->
+    <div class="section-title">Inspection Summary</div>
     <div class="summary">
-      <div class="card">
-        <strong>10M Line #01</strong>
+      <div class="summary-card">
+        <strong>📊 Total Inspections</strong>
         <p>300</p>
       </div>
-      <div class="card">
-        <strong>10M Line #02</strong>
+      <div class="summary-card">
+        <strong>✅ Total Verified by MFQ</strong>
         <p>400</p>
       </div>
-      <div class="card">
-        <strong>10M Line #03</strong>
+      <div class="summary-card">
+        <strong>🕒 Under MFQ Review</strong>
         <p>500</p>
       </div>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="summary">
-      <div class="card">
-        <strong>Total Inspections</strong>
-        <p>2400</p>
-      </div>
-      <div class="card">
-        <strong>✅ OK</strong>
-        <p>85%</p>
-      </div>
-      <div class="card">
-        <strong>❌ NOK</strong>
-        <p>10%</p>
-      </div>
-      <div class="card">
-        <strong>⚪ N/A</strong>
-        <p>5%</p>
-      </div>
-    </div>
+    <!-- Charts Section -->
+    <div class="section-title">Inspection Station Wise</div>
+   <div class="grid">
+    <!-- ST-15 Chart -->
+   <div class="card">
+  <h2>ST-15 Accumulator Cap</h2>
+  <p class="subtitle">Pos. 501 & 502 Depth</p>
+  <div class="chart-container" style="height: 240px;">
+    <canvas id="chart1"></canvas>
+  </div>
+  <div class="notation">
+    <div><span class="circle red"></span> Spec Range: 0.75 - 1.45 mm</div>
+    <div><span class="circle green"></span> Control Limit: 0.80 - 1.40 mm</div>
+  </div>
+</div>
 
-    <!-- Chart Section -->
-    <canvas id="statusChart"></canvas>
+    <!-- Staking Measurement -->
+    <div class="card">
+  <h2>ST-20 Staking</h2>
+  <p class="subtitle">Depth by Position</p>
+  <div class="chart-container" style="height: 260px;">
+    <canvas id="chart2"></canvas>
+  </div>
+  <div class="notation">
+    <div><span class="circle red"></span> Spec Range: 0.50 - 0.85 mm</div>
+    <div><span class="circle green"></span> Control Limit: 0.55 - 0.80 mm</div>
+  </div>
+</div>
 
-    <!-- Data Table -->
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Line</th>
-            <th>Shift</th>
-            <th>Part No</th>
-            <th>Part Type</th>
-            <th>Supervisor</th>
-            <th>DMC No</th>
-            <th>Station</th>
-            <th>Position</th>
-            <th>Depth</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2025-07-20</td>
-            <td>1</td>
-            <td>A</td>
-            <td>ABS10M</td>
-            <td>Type A</td>
-            <td>Mr. Singh</td>
-            <td>100818</td>
-            <td>ST.15</td>
-            <td>501</td>
-            <td>1.10</td>
-            <td>OK</td>
-          </tr>
-          <tr>
-            <td>2025-07-20</td>
-            <td>1</td>
-            <td>A</td>
-            <td>ABS10M</td>
-            <td>Type A</td>
-            <td>Mr. Singh</td>
-            <td>100818</td>
-            <td>ST.15</td>
-            <td>502</td>
-            <td>1.20</td>
-            <td>OK</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+
+    <!-- ST-25 Gauge Chart -->
+   <div class="card">
+  <h2>ST-25 C-Bearing</h2>
+  <p>221 Depth Check</p>
+  <div class="chart-container">
+    <canvas id="chart3"></canvas>
+  </div>
+  <div class="notation">
+    <div><span class="circle red"></span> 0.20 - 0.60 mm</div>
+    <div><span class="circle green"></span> 0.30 - 0.45 mm</div>
+  </div>
+</div>
+
+    <!-- MV Staking Chart -->
+<div class="card">
+  <h2>ST-25 MV Staking</h2>
+  <p class="subtitle">Gauge: LS00800 050 007 | Setting: LY09000 050 028</p>
+  
+  <!-- Chart Container -->
+  <div class="chart-container" style="height: 250px;">
+    <canvas id="chart4"></canvas>
+  </div>
+
+  <!-- Notation -->
+  <div class="notation">
+    <div><span class="circle red"></span> Spec Range: 0.65 - 0.90 mm</div>
+    <div><span class="circle green"></span> Control Limit: 0.70 - 0.85 mm</div>
+  </div>
+</div>
+
+
+<div class="card">
+  <h2>ST-30 – Motor Staking</h2>
+  <p>Pos. 222, 223 & 224 Depth Measurement</p>
+  <div class="chart-container" style="height: 280px;">
+    <canvas id="st30Chart"></canvas>
+  </div>
+  <div class="notation">
+    <div><span class="circle red"></span> Spec Range: 0.50 - 1.40 mm</div>
+    <div><span class="circle green"></span> Control Limit: 0.65 - 1.30 mm</div>
+  </div>
+</div>
+
+
+
+<div class="card">
+  <h2>ST-40 Staking</h2>
+  <p>Gauge: LS00800 050 007 | Setting: LY09000 050 028</p>
+  <div class="chart-container" style="position: relative; height: 280px; width: 100%;">
+    <canvas id="chart6"></canvas>
+  </div>
+  <div class="notation">
+    <div><span class="circle red"></span> 0.37 - 0.60 mm</div>
+    <div><span class="circle green"></span> 0.40 - 0.56 mm</div>
+  </div>
+</div>
+
+
+
+
   </div>
 
   <script>
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['ST.15', 'ST.20', 'ST.25', 'ST.30', 'ST.40', 'ST.45', 'ST.85'],
-        datasets: [
-          {
-            label: 'OK',
-            data: [40, 38, 35, 30, 25, 20, 18],
-            backgroundColor: '#38a169'
-          },
-          {
-            label: 'NOK',
-            data: [5, 4, 3, 2, 2, 1, 1],
-            backgroundColor: '#e53e3e'
-          },
-          {
-            label: 'N/A',
-            data: [2, 3, 1, 1, 0, 0, 0],
-            backgroundColor: '#a0aec0'
-          }
-        ]
+    // CHART 1 - ST-15----------------------------------------------------------------------
+
+
+    const ctx1 = document.getElementById('chart1').getContext('2d');
+
+// Beautiful gradient color for bars
+const grad1 = ctx1.createLinearGradient(0, 0, 0, 300);
+grad1.addColorStop(0, '#36d1dc');
+grad1.addColorStop(1, '#5b86e5');
+
+// Highlight zones plugin for spec and control limits
+const plugin1 = {
+  id: 'bg1',
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+    ctx.save();
+
+    // Red zone (Spec range)
+    ctx.fillStyle = 'rgba(255,0,0,0.08)';
+    ctx.fillRect(left, y.getPixelForValue(1.45), right - left, y.getPixelForValue(0.75) - y.getPixelForValue(1.45));
+
+    // Green zone (Control range)
+    ctx.fillStyle = 'rgba(0,128,0,0.1)';
+    ctx.fillRect(left, y.getPixelForValue(1.4), right - left, y.getPixelForValue(0.8) - y.getPixelForValue(1.4));
+
+    // Dotted lines - spec
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = 'red';
+    [0.75, 1.45].forEach(val => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
+      ctx.stroke();
+    });
+
+    // Dotted lines - control
+    ctx.strokeStyle = 'green';
+    [0.8, 1.4].forEach(val => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  }
+};
+
+// Final Chart.js configuration
+new Chart(ctx1, {
+  type: 'bar',
+  data: {
+    labels: ['501', '502'],
+    datasets: [{
+      data: [1.10, 1.20],
+      backgroundColor: grad1,
+      borderRadius: 8,
+      barThickness: 36
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        font: { size: 11, weight: 'bold' },
+        formatter: val => val.toFixed(2)
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'top'
-          },
-          title: {
-            display: true,
-            text: 'Station-wise Status Overview'
-          }
+    },
+    scales: {
+      y: {
+        min: 0.6,
+        max: 1.6,
+        ticks: {
+          stepSize: 0.1,
+          font: { size: 11 }
+        },
+        grid: {
+          drawTicks: false,
+          color: 'rgba(0,0,0,0.05)'
+        }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 11 } }
+      }
+    }
+  },
+  plugins: [ChartDataLabels, plugin1]
+});
+
+
+//st-20 ----------------------------------------------------------------------------------
+
+
+
+    const ctx2 = document.getElementById('chart2').getContext('2d');
+const grad2 = ctx2.createLinearGradient(0, 0, 0, 260);
+grad2.addColorStop(0, '#36d1dc');
+grad2.addColorStop(1, '#5b86e5');
+
+const plugin2 = {
+  id: 'bg2',
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+    ctx.save();
+
+    // Red Range (Spec)
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.1)';
+    ctx.fillRect(left, y.getPixelForValue(0.85), right - left, y.getPixelForValue(0.50) - y.getPixelForValue(0.85));
+
+    // Green Range (Control)
+    ctx.fillStyle = 'rgba(0, 128, 0, 0.12)';
+    ctx.fillRect(left, y.getPixelForValue(0.80), right - left, y.getPixelForValue(0.55) - y.getPixelForValue(0.80));
+
+    // Red Lines
+    ctx.strokeStyle = 'red';
+    ctx.setLineDash([4, 4]);
+    [0.50, 0.85].forEach(v => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(v));
+      ctx.lineTo(right, y.getPixelForValue(v));
+      ctx.stroke();
+    });
+
+    // Green Lines
+    ctx.strokeStyle = 'green';
+    [0.55, 0.80].forEach(v => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(v));
+      ctx.lineTo(right, y.getPixelForValue(v));
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  }
+};
+
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels: ['311', '312', '411', '412', '531', '532', '541', '542'],
+    datasets: [{
+      data: [0.64, 0.64, 0.66, 0.66, 0.68, 0.66, 0.71, 0.71],
+      backgroundColor: grad2,
+      borderRadius: 6,
+      barThickness: 25,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        font: { size: 10 },
+        formatter: val => val.toFixed(2)
+      },
+    },
+    scales: {
+      y: {
+        min: 0.4,
+        max: 0.9,
+        ticks: { stepSize: 0.1 }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 10 } }
+      }
+    },
+    responsive: true,
+    maintainAspectRatio: false
+  },
+  plugins: [ChartDataLabels, plugin2]
+});
+
+    // CHART 3 - ST-25 c -----------------------------------------------------------------------------------
+
+
+    const ctx3 = document.getElementById('chart3').getContext('2d');
+const value = 0.39;
+
+new Chart(ctx3, {
+  type: 'bar',
+  data: {
+    labels: ['221'],
+    datasets: [
+      {
+        label: 'Low',
+        data: [0.30],
+        backgroundColor: 'rgba(255,0,0,0.12)',
+        barThickness: 26,
+        stack: 's'
+      },
+      {
+        label: 'Control',
+        data: [0.15],
+        backgroundColor: 'rgba(0,128,0,0.18)',
+        barThickness: 26,
+        stack: 's'
+      },
+      {
+        label: 'High',
+        data: [0.15],
+        backgroundColor: 'rgba(255,0,0,0.12)',
+        barThickness: 26,
+        stack: 's'
+      },
+      {
+        label: 'Actual',
+        type: 'line',
+        data: [value],
+        pointBackgroundColor: '#333',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 1.5,
+        pointRadius: 6,
+        showLine: false
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: () => `Depth: ${value.toFixed(2)} mm`
         }
       }
+    },
+    scales: {
+      x: {
+        min: 0.18,
+        max: 0.62,
+        ticks: {
+          stepSize: 0.05,
+          color: '#555',
+          font: { size: 11 }
+        },
+        grid: {
+          drawTicks: true,
+          color: 'rgba(200,200,200,0.2)'
+        }
+      },
+      y: {
+        ticks: { display: false },
+        grid: { display: false }
+      }
+    },
+    responsive: true,
+    maintainAspectRatio: false
+  },
+  plugins: [{
+    id: 'labelDot',
+    afterDatasetsDraw(chart) {
+      const { ctx, chartArea: { top }, scales: { x } } = chart;
+      ctx.save();
+      ctx.fillStyle = '#000';
+      ctx.font = 'bold 12px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${value.toFixed(2)} mm`, x.getPixelForValue(value), top - 8);
+      ctx.restore();
+    }
+  }]
+});
+
+    // CHART 4 - ST-25 MV-------------------------------------------------------------------------------
+
+
+
+
+
+ const ctx4 = document.getElementById('chart4').getContext('2d');
+  const grad4 = ctx4.createLinearGradient(0, 0, 0, 300);
+  grad4.addColorStop(0, '#36d1dc');
+  grad4.addColorStop(1, '#5b86e5');
+
+  const plugin4 = {
+    id: 'bg4',
+    beforeDatasetsDraw(chart) {
+      const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+      ctx.save();
+
+      // Spec Range Background (Red)
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.1)';
+      ctx.fillRect(left, y.getPixelForValue(0.90), right - left, y.getPixelForValue(0.65) - y.getPixelForValue(0.90));
+
+      // Control Range Background (Green)
+      ctx.fillStyle = 'rgba(0, 128, 0, 0.15)';
+      ctx.fillRect(left, y.getPixelForValue(0.85), right - left, y.getPixelForValue(0.70) - y.getPixelForValue(0.85));
+
+      // Dashed Lines
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1.5;
+
+      // Red Spec Lines
+      ctx.strokeStyle = 'red';
+      [0.65, 0.90].forEach(v => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(v));
+        ctx.lineTo(right, y.getPixelForValue(v));
+        ctx.stroke();
+      });
+
+      // Green Control Lines
+      ctx.strokeStyle = 'green';
+      [0.70, 0.85].forEach(v => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(v));
+        ctx.lineTo(right, y.getPixelForValue(v));
+        ctx.stroke();
+      });
+
+      ctx.restore();
+    }
+  };
+
+  new Chart(ctx4, {
+    type: 'bar',
+    data: {
+      labels: ['201', '202', '211', '212'],
+      datasets: [{
+        data: [0.76, 0.76, 0.76, 0.77],
+        backgroundColor: grad4,
+        borderRadius: 6,
+        barThickness: 35
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          color: '#000',
+          anchor: 'end',
+          align: 'top',
+          font: { weight: 'bold', size: 11 },
+          formatter: val => val.toFixed(2)
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 0.6,
+          max: 1.0,
+          ticks: {
+            stepSize: 0.05,
+            font: { size: 11 }
+          }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        }
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    },
+    plugins: [ChartDataLabels, plugin4]
+  });
+
+//st-30------------------------------------------------------------------------------------------------
+
+
+const ctx30 = document.getElementById('st30Chart').getContext('2d');
+
+// Gradient color
+const grad30 = ctx30.createLinearGradient(0, 0, 0, 300);
+grad30.addColorStop(0, '#36d1dc');
+grad30.addColorStop(1, '#5b86e5');
+
+// Highlight plugin
+const plugin30 = {
+  id: 'bg30',
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+    ctx.save();
+
+    // Red zone (spec range)
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.08)';
+    ctx.fillRect(left, y.getPixelForValue(1.4), right - left, y.getPixelForValue(0.5) - y.getPixelForValue(1.4));
+
+    // Green zone (control range)
+    ctx.fillStyle = 'rgba(0, 128, 0, 0.1)';
+    ctx.fillRect(left, y.getPixelForValue(1.3), right - left, y.getPixelForValue(0.65) - y.getPixelForValue(1.3));
+
+    // Spec dashed lines
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = 'red';
+    [0.5, 1.4].forEach(val => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
+      ctx.stroke();
     });
+
+    // Control dashed lines
+    ctx.strokeStyle = 'green';
+    [0.65, 1.3].forEach(val => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  }
+};
+
+new Chart(ctx30, {
+  type: 'bar',
+  data: {
+    labels: ['Pos. 222', 'Pos. 223', 'Pos. 224'],
+    datasets: [{
+      label: 'Staking Depth (mm)',
+      data: [0.98, 0.96, 0.94],
+      backgroundColor: grad30,
+      borderRadius: 8,
+      barThickness: 36,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: { padding: { top: 5, bottom: 10, left: 10, right: 10 } },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        font: { size: 11, weight: 'bold' },
+        formatter: val => val.toFixed(2)
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
+        }
+      }
+    },
+    scales: {
+      y: {
+        min: 0.4,
+        max: 1.5,
+        ticks: {
+          stepSize: 0.1,
+          font: { size: 11 }
+        },
+        grid: {
+          drawTicks: false,
+          color: 'rgba(0,0,0,0.05)'
+        }
+      },
+      x: {
+        ticks: { font: { size: 11 } },
+        grid: { display: false }
+      }
+    }
+  },
+  plugins: [ChartDataLabels, plugin30]
+});
+
+
+// st-40----------------------------------------------------------------------------------------------------
+
+
+ const ctxST40 = document.getElementById('chart6').getContext('2d');
+
+// Gradient
+const gradST40 = ctxST40.createLinearGradient(0, 0, 0, 300);
+gradST40.addColorStop(0, '#36d1dc');
+gradST40.addColorStop(1, '#5b86e5');
+
+// Spec and control limits
+const specMin = 0.37, specMax = 0.60;
+const ctrlMin = 0.40, ctrlMax = 0.56;
+
+// Highlight zone plugin
+const pluginST40 = {
+  id: 'bgST40',
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+    ctx.save();
+
+    // Spec zone (red)
+    ctx.fillStyle = 'rgba(255,0,0,0.08)';
+    ctx.fillRect(left, y.getPixelForValue(specMax), right - left, y.getPixelForValue(specMin) - y.getPixelForValue(specMax));
+
+    // Control zone (green)
+    ctx.fillStyle = 'rgba(0,128,0,0.1)';
+    ctx.fillRect(left, y.getPixelForValue(ctrlMax), right - left, y.getPixelForValue(ctrlMin) - y.getPixelForValue(ctrlMax));
+
+    // Dotted lines - spec
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = 'red';
+    [specMin, specMax].forEach(val => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
+      ctx.stroke();
+    });
+
+    // Dotted lines - control
+    ctx.strokeStyle = 'green';
+    [ctrlMin, ctrlMax].forEach(val => {
+      ctx.beginPath();
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  }
+};
+
+// Final Chart
+new Chart(ctxST40, {
+  type: 'bar',
+  data: {
+    labels: ['301', '401'],
+    datasets: [{
+      data: [0.43, 0.48],
+      backgroundColor: gradST40,
+      borderRadius: 8,
+      barThickness: 36,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    layout: {
+      padding: { left: 20, right: 20, bottom: 10 }
+    },
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        color: '#000',
+        font: { size: 11, weight: 'bold' },
+        formatter: val => val.toFixed(2)
+      }
+    },
+    scales: {
+      y: {
+        min: 0.3,
+        max: 0.65,
+        ticks: {
+          stepSize: 0.05,
+          font: { size: 11 }
+        },
+        title: {
+          display: true,
+          text: 'Staking Depth (mm)',
+          font: { size: 13, weight: 'bold' }
+        },
+        grid: {
+          drawBorder: true,
+          color: 'rgba(0,0,0,0.05)'
+        }
+      },
+      x: {
+        ticks: { font: { size: 11 } },
+        title: {
+          display: true,
+          text: 'Staking Position',
+          font: { size: 13, weight: 'bold' }
+        },
+        grid: { display: false }
+      }
+    }
+  },
+  plugins: [ChartDataLabels, pluginST40]
+});
+
   </script>
 </body>
+
 </html>

@@ -80,6 +80,25 @@ header {
 
 }
 
+.dashboard-btn {
+  background-color: #004080;
+  color: #ffffff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 15px;
+}
+
+.dashboard-btn:hover {
+  background-color: #0059b3;
+}
+
+
+
 .container {
 
   max-width: 960px;

@@ -5,7 +5,6 @@
     {% load static %}
     <title>Submit Form</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}" />
-
     <meta charset="UTF-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,8 +24,9 @@
           </div>
 
           <div class="header-right">
-            <span class="bosch-logo">BOSCH</span>
-          </div>
+    <a href="{% url 'dashboard' %}" class="dashboard-btn">Dashboard</a>
+    <span class="bosch-logo">BOSCH</span>
+  </div>
         </header>
 
         <section class="card">
