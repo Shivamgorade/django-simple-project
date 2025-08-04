@@ -1,5 +1,5 @@
 import os
-import pandas as pd
+# import pandas as pd
 from django.http import JsonResponse
 import openpyxl
 from django.shortcuts import render, redirect
@@ -128,82 +128,82 @@ def dashboard_view(request):
     return render(request, 'dashboard.html')
 
 
-def get_filtered_chart_data(request):
-    try:
-        import os
-        import traceback
-        import pandas as pd
-        from django.http import JsonResponse
-        from django.conf import settings
+# def get_filtered_chart_data(request):
+#     try:
+#         import os
+#         import traceback
+#         import pandas as pd
+#         from django.http import JsonResponse
+#         from django.conf import settings
 
-        # Get query parameters
-        date = request.GET.get('date')        # e.g., '2025-08-03'
-        line_no = request.GET.get('line')     # e.g., '10M LINE#01'
-        shift = request.GET.get('shift')      # e.g., '1st'
+#         # Get query parameters
+#         date = request.GET.get('date')        # e.g., '2025-08-03'
+#         line_no = request.GET.get('line')     # e.g., '10M LINE#01'
+#         shift = request.GET.get('shift')      # e.g., '1st'
 
-        print("Received filters:")
-        print(f"Date: {date}, Line: {line_no}, Shift: {shift}")
+#         print("Received filters:")
+#         print(f"Date: {date}, Line: {line_no}, Shift: {shift}")
 
-        # Load Excel file
-        excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
-        df = pd.read_excel(excel_path, header=2)
+#         # Load Excel file
+#         excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+#         df = pd.read_excel(excel_path, header=2)
 
-        # Clean column names
-        df.columns = [str(col).strip() for col in df.columns]
+#         # Clean column names
+#         df.columns = [str(col).strip() for col in df.columns]
 
-        # Normalize and clean data
-        df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
-        df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
-        df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
+#         # Normalize and clean data
+#         df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
+#         df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
+#         df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
 
-        # Normalize filter values
-        date = date.strip()
-        line_no = line_no.strip().upper()
-        shift = shift.strip().lower()
+#         # Normalize filter values
+#         date = date.strip()
+#         line_no = line_no.strip().upper()
+#         shift = shift.strip().lower()
 
-        print("Normalized filters:")
-        print(f"Date: {date}, Line: {line_no}, Shift: {shift}")
-        print("Available LINE NOs:", df['LINE NO'].unique())
-        print("Available SHIFTs:", df['SHIFT'].unique())
-        print("Available DATEs:", df['DATE'].unique())
+#         print("Normalized filters:")
+#         print(f"Date: {date}, Line: {line_no}, Shift: {shift}")
+#         print("Available LINE NOs:", df['LINE NO'].unique())
+#         print("Available SHIFTs:", df['SHIFT'].unique())
+#         print("Available DATEs:", df['DATE'].unique())
 
-        # Filter the data
-        filtered_df = df[
-            (df['DATE'] == date) &
-            (df['LINE NO'] == line_no) &
-            (df['SHIFT'] == shift)
-        ]
+#         # Filter the data
+#         filtered_df = df[
+#             (df['DATE'] == date) &
+#             (df['LINE NO'] == line_no) &
+#             (df['SHIFT'] == shift)
+#         ]
 
-        print("Filtered rows count:", len(filtered_df))
+#         print("Filtered rows count:", len(filtered_df))
 
-        if filtered_df.empty:
-            return JsonResponse({'message': 'No data found for given filter!'}, status=404)
+#         if filtered_df.empty:
+#             return JsonResponse({'message': 'No data found for given filter!'}, status=404)
 
-        row = filtered_df.iloc[0]
+#         row = filtered_df.iloc[0]
 
-        # Initialize lists
-        labels = []
-        data = []
+#         # Initialize lists
+#         labels = []
+#         data = []
 
-        # Read values if available and not NaN
-        if '501' in row and pd.notna(row['501']):
-            labels.append('501')
-            data.append(round(float(row['501']), 2))
+#         # Read values if available and not NaN
+#         if '501' in row and pd.notna(row['501']):
+#             labels.append('501')
+#             data.append(round(float(row['501']), 2))
 
-        if '502' in row and pd.notna(row['502']):
-            labels.append('502')
-            data.append(round(float(row['502']), 2))
+#         if '502' in row and pd.notna(row['502']):
+#             labels.append('502')
+#             data.append(round(float(row['502']), 2))
 
-        # If both missing, return info message
-        if not labels:
-            return JsonResponse({'message': 'No valid depth data for POS 501 or 502'}, status=204)
+#         # If both missing, return info message
+#         if not labels:
+#             return JsonResponse({'message': 'No valid depth data for POS 501 or 502'}, status=204)
 
-        return JsonResponse({
-            'labels': labels,
-            'data': data
-        })
+#         return JsonResponse({
+#             'labels': labels,
+#             'data': data
+#         })
 
-    except Exception as e:
-        traceback.print_exc()
-        return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
+#     except Exception as e:
+#         traceback.print_exc()
+#         return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
 
