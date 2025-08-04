@@ -1,5 +1,5 @@
 import os
-# import pandas as pd
+import pandas as pd
 from django.http import JsonResponse
 import openpyxl
 from django.shortcuts import render, redirect
