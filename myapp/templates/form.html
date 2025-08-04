@@ -36,15 +36,30 @@
           </h2>
 
           <div class="grid">
-            <div class="form-control">
-              <label for="datetime">Date & Time<span>*</span></label>
-              <input
-                type="datetime-local"
-                id="datetime"
-                name="date_time"
-                required
-              />
-            </div>
+          <div class="form-control">
+  <label for="datetime">Date<span>*</span></label>
+  <input
+    type="date"
+    id="datetime"
+    name="date"  
+    required
+  />
+</div>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const datetimeInput = document.getElementById("datetime");
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    const formatted = `${year}-${month}-${day}`;
+    datetimeInput.value = formatted;
+  });
+</script>
+
 
             <div class="form-control">
               <label for="line_no">Line No.<span>*</span></label>
@@ -60,9 +75,9 @@
               <label for="shift">Shift<span>*</span></label>
               <select id="shift" name="shift" required>
                 <option value="" disabled selected>Select Shift</option>
-                <option value="1st">1st Shift [12:00–7:00]</option>
-                <option value="2nd">2nd Shift [7:00–3:30]</option>
-                <option value="3rd">3rd Shift [3:30–12:00]</option>
+                <option value="1st">1st </option>
+                <option value="2nd">2nd </option>
+                <option value="3rd">3rd </option>
               </select>
             </div>
 
@@ -940,28 +955,6 @@
 </section>
 
       </div>
-
-      <script>
-        window.addEventListener("DOMContentLoaded", () => {
-          const datetimeInput = document.getElementById("datetime");
-
-          const now = new Date();
-
-          const year = now.getFullYear();
-
-          const month = String(now.getMonth() + 1).padStart(2, "0"); // Months start at 0
-
-          const day = String(now.getDate()).padStart(2, "0");
-
-          const hours = String(now.getHours()).padStart(2, "0");
-
-          const minutes = String(now.getMinutes()).padStart(2, "0");
-
-          const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
-
-          datetimeInput.value = formatted;
-        });
-      </script>
     </form>
   </body>
 </html>

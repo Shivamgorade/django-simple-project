@@ -186,21 +186,23 @@
   <div class="container">
 
     <!-- Filter Section -->
-    <div class="filters">
-      <input type="date" />
-      <select>
-        <option disabled selected>Line No</option>
-        <option>10M Line#01</option>
-        <option>10M Line#02</option>
-        <option>10M Line#03</option>
-      </select>
-      <select>
-        <option disabled selected>Shift</option>
-        <option>1st Shift [12:00–7:00]</option>
-        <option>2nd Shift [07:00–03:30]</option>
-        <option>3rd Shift [03:30–12:00]</option>
-      </select>
-    </div>
+   <div class="filters">
+    <input type="date" id="filter-date" />
+    <select id="filter-line">
+      <option disabled selected>Line No</option>
+      <option value="10M LINE#01">10M LINE#01</option>
+     <option value="10M LINE#02">10M LINE#02</option>
+     <option value="10M LINE#03">10M LINE#03</option>
+    </select>
+    <select id="filter-shift">
+      <option disabled selected>Shift</option>
+       <option value="1st">1st</option>
+  <option value="2nd">2nd</option>
+  <option value="3rd">3rd</option>
+    </select>
+    <button id="apply-filters">Search</button>
+  </div>
+
 
     <!-- Summary Section -->
     <div class="section-title">Inspection Summary</div>
@@ -317,82 +319,63 @@
   <script>
     // CHART 1 - ST-15----------------------------------------------------------------------
 
+const ctx1 = document.getElementById("chart1").getContext("2d");
 
-    const ctx1 = document.getElementById("chart1").getContext("2d");
-
-// Beautiful gradient color for bars
+// Gradient color
 const grad1 = ctx1.createLinearGradient(0, 0, 0, 300);
 grad1.addColorStop(0, "#36d1dc");
 grad1.addColorStop(1, "#5b86e5");
 
-// Background plugin for control and spec zones
+// Background plugin
 const plugin1 = {
   id: "bg1",
   beforeDatasetsDraw(chart) {
-    const {
-      ctx,
-      chartArea: { left, right },
-      scales: { y },
-    } = chart;
+    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
     ctx.save();
 
-    // Red Spec Zone Background
+    // Red Zone
     ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
-    ctx.fillRect(
-      left,
-      y.getPixelForValue(1.50),
-      right - left,
-      y.getPixelForValue(0.70) - y.getPixelForValue(1.50)
-    );
+    ctx.fillRect(left, y.getPixelForValue(1.50), right - left, y.getPixelForValue(0.70) - y.getPixelForValue(1.50));
 
-    // Green Control Zone Background
+    // Green Zone
     ctx.fillStyle = "rgba(0, 128, 0, 0.15)";
-    ctx.fillRect(
-      left,
-      y.getPixelForValue(1.4),
-      right - left,
-      y.getPixelForValue(0.8) - y.getPixelForValue(1.4)
-    );
+    ctx.fillRect(left, y.getPixelForValue(1.4), right - left, y.getPixelForValue(0.8) - y.getPixelForValue(1.4));
 
-    // Dashed lines
+    // Spec limits
     ctx.setLineDash([5, 5]);
     ctx.lineWidth = 1.5;
-
-    // Red Spec Limits
     ctx.strokeStyle = "red";
-    [0.75, 1.45].forEach((v) => {
+    [0.75, 1.45].forEach(val => {
       ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(v));
-      ctx.lineTo(right, y.getPixelForValue(v));
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
       ctx.stroke();
     });
 
-    // Green Control Limits
+    // Control limits
     ctx.strokeStyle = "green";
-    [0.8, 1.4].forEach((v) => {
+    [0.8, 1.4].forEach(val => {
       ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(v));
-      ctx.lineTo(right, y.getPixelForValue(v));
+      ctx.moveTo(left, y.getPixelForValue(val));
+      ctx.lineTo(right, y.getPixelForValue(val));
       ctx.stroke();
     });
 
     ctx.restore();
-  },
+  }
 };
 
-// Chart1 setup
-new Chart(ctx1, {
+// Chart instance with dummy data
+const myChart = new Chart(ctx1, {
   type: "bar",
   data: {
-    labels: ["101", "102", "111", "112"],
-    datasets: [
-      {
-        data: [1.23, 1.27, 1.22, 1.26],
-        backgroundColor: grad1,
-        borderRadius: 4,
-        barThickness: 35,
-      },
-    ],
+    labels: [], // Set during fetch
+    datasets: [{
+      data: [],
+      backgroundColor: grad1,
+      borderRadius: 4,
+      barThickness: 35,
+    }]
   },
   options: {
     plugins: {
@@ -402,13 +385,13 @@ new Chart(ctx1, {
         anchor: "end",
         align: "top",
         font: { weight: "bold", size: 11 },
-        formatter: (val) => val.toFixed(2),
+        formatter: val => val.toFixed(2)
       },
       tooltip: {
         callbacks: {
-          label: (ctx) => `Depth: ${ctx.parsed.y.toFixed(2)} mm`,
-        },
-      },
+          label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
+        }
+      }
     },
     scales: {
       y: {
@@ -417,21 +400,56 @@ new Chart(ctx1, {
         ticks: {
           stepSize: 0.05,
           font: { size: 11 },
-          callback: (val) => val.toFixed(2),
-        },
+          callback: val => val.toFixed(2)
+        }
       },
       x: {
         grid: { display: false },
-        ticks: { font: { size: 11 } },
-      },
+        ticks: { font: { size: 11 } }
+      }
     },
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: false
   },
-  plugins: [ChartDataLabels, plugin1],
+  plugins: [ChartDataLabels, plugin1]
 });
 
+// Fetch function
+async function fetchChartData(date, shift, line) {
+  try {
+    const res = await fetch(`/api/chart-data/?date=${date}&shift=${encodeURIComponent(shift)}&line=${encodeURIComponent(line)}`);
+    if (!res.ok) throw new Error(`Server returned ${res.status}`);
 
+    const data = await res.json();
+    console.log("Received chart data:", data);
+
+    if (data && Array.isArray(data.labels) && Array.isArray(data.data) && data.labels.length === data.data.length) {
+      myChart.data.labels = data.labels;
+      myChart.data.datasets[0].data = data.data;
+      myChart.update();
+    } else {
+      alert("Chart data missing required fields or format is incorrect.");
+      console.error("Expected: { labels: [...], data: [...] }, but got:", data);
+    }
+
+  } catch (err) {
+    console.error("Failed to fetch chart data:", err);
+    alert("Failed to load chart data: " + err.message);
+  }
+}
+
+// Filter event
+document.getElementById("apply-filters").addEventListener("click", () => {
+  const date = document.getElementById("filter-date").value;
+  const line = document.getElementById("filter-line").value;
+  const shift = document.getElementById("filter-shift").value;
+
+  if (date && line && shift) {
+    fetchChartData(date, shift, line);
+  } else {
+    alert("Please select all filters.");
+  }
+});
 
 
 //st-20 ----------------------------------------------------------------------------------
