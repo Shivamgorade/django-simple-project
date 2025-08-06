@@ -128,82 +128,361 @@ def dashboard_view(request):
     return render(request, 'dashboard.html')
 
 
-# def get_filtered_chart_data(request):
-#     try:
-#         import os
-#         import traceback
-#         import pandas as pd
-#         from django.http import JsonResponse
-#         from django.conf import settings
+from django.http import JsonResponse
+import os
+import traceback
+import pandas as pd
+from django.conf import settings
 
-#         # Get query parameters
-#         date = request.GET.get('date')        # e.g., '2025-08-03'
-#         line_no = request.GET.get('line')     # e.g., '10M LINE#01'
-#         shift = request.GET.get('shift')      # e.g., '1st'
 
-#         print("Received filters:")
-#         print(f"Date: {date}, Line: {line_no}, Shift: {shift}")
+def load_and_filter_excel(date, line_no, shift):
+    """Load the Excel file and filter by date, line number, and shift"""
+    try:
+        path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+        df = pd.read_excel(path, header=2)
+        df.columns = [str(col).strip() for col in df.columns]
 
-#         # Load Excel file
-#         excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
-#         df = pd.read_excel(excel_path, header=2)
+        df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
+        df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
+        df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
 
-#         # Clean column names
-#         df.columns = [str(col).strip() for col in df.columns]
+        filtered_df = df[
+            (df['DATE'] == date) &
+            (df['LINE NO'] == line_no) &
+            (df['SHIFT'] == shift)
+        ]
 
-#         # Normalize and clean data
-#         df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
-#         df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
-#         df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
+        return filtered_df
+    except Exception as e:
+        raise RuntimeError(f"Error loading or filtering Excel: {str(e)}")
 
-#         # Normalize filter values
-#         date = date.strip()
-#         line_no = line_no.strip().upper()
-#         shift = shift.strip().lower()
 
-#         print("Normalized filters:")
-#         print(f"Date: {date}, Line: {line_no}, Shift: {shift}")
-#         print("Available LINE NOs:", df['LINE NO'].unique())
-#         print("Available SHIFTs:", df['SHIFT'].unique())
-#         print("Available DATEs:", df['DATE'].unique())
+def extract_positions(row, positions):
+    """Extract values for given positions from a row"""
+    labels, values = [], []
+    for pos in positions:
+        if pos in row and pd.notna(row[pos]):
+            labels.append(pos)
+            values.append(round(float(row[pos]), 2))
+    return labels, values
 
-#         # Filter the data
-#         filtered_df = df[
-#             (df['DATE'] == date) &
-#             (df['LINE NO'] == line_no) &
-#             (df['SHIFT'] == shift)
-#         ]
 
-#         print("Filtered rows count:", len(filtered_df))
+# Chart ST-15
+def get_filtered_chart_data(request):
+    try:
+        date = request.GET.get('date', '').strip()
+        line_no = request.GET.get('line', '').strip().upper()
+        shift = request.GET.get('shift', '').strip().lower()
 
-#         if filtered_df.empty:
-#             return JsonResponse({'message': 'No data found for given filter!'}, status=404)
+        if not date or not line_no or not shift:
+            return JsonResponse({'message': 'Missing one or more required parameters'}, status=400)
 
-#         row = filtered_df.iloc[0]
+        filtered_df = load_and_filter_excel(date, line_no, shift)
+        if filtered_df.empty:
+            return JsonResponse({'message': 'No data found for given filter!'}, status=404)
 
-#         # Initialize lists
-#         labels = []
-#         data = []
+        row = filtered_df.iloc[0]
+        labels, data = extract_positions(row, ['501', '502'])
 
-#         # Read values if available and not NaN
-#         if '501' in row and pd.notna(row['501']):
-#             labels.append('501')
-#             data.append(round(float(row['501']), 2))
+        if not labels:
+            return JsonResponse({'message': 'No valid depth data for POS 501 or 502'}, status=204)
 
-#         if '502' in row and pd.notna(row['502']):
-#             labels.append('502')
-#             data.append(round(float(row['502']), 2))
+        return JsonResponse({'labels': labels, 'data': data})
 
-#         # If both missing, return info message
-#         if not labels:
-#             return JsonResponse({'message': 'No valid depth data for POS 501 or 502'}, status=204)
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
 
-#         return JsonResponse({
-#             'labels': labels,
-#             'data': data
-#         })
 
-#     except Exception as e:
-#         traceback.print_exc()
-#         return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
+# Chart ST-20
+
+def get_filtered_chart_data_st20(request):
+    try:
+        date = request.GET.get('date', '').strip()
+        line_no = request.GET.get('line', '').strip().upper()
+        shift = request.GET.get('shift', '').strip().lower()
+
+        if not date or not line_no or not shift:
+            return JsonResponse({'message': 'Missing one or more required parameters'}, status=400)
+
+        filtered_df = load_and_filter_excel(date, line_no, shift)
+        if filtered_df.empty:
+            return JsonResponse({'message': 'No data found for given filter!'}, status=404)
+
+        row = filtered_df.iloc[0]
+        labels, values = extract_positions(row, ['311', '312', '411', '412', '531', '532', '541', '542'])
+
+        if not labels:
+            return JsonResponse({'message': 'No valid depth values for ST-20 positions'}, status=204)
+
+        return JsonResponse({'labels': labels, 'values': values})
+
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
+
+
+# Chart ST-25-C (only 1 position)
+def get_filtered_chart_data_st25c(request):
+    try:
+        date = request.GET.get('date', '').strip()
+        line_no = request.GET.get('line', '').strip().upper()
+        shift = request.GET.get('shift', '').strip().lower()
+
+        if not date or not line_no or not shift:
+            return JsonResponse({'message': 'Missing one or more required parameters'}, status=400)
+
+        filtered_df = load_and_filter_excel(date, line_no, shift)
+        if filtered_df.empty:
+            return JsonResponse({'message': 'No data found for given filter'}, status=404)
+
+        row = filtered_df.iloc[0]
+        value = row.get('221', None)
+
+        if value is None or pd.isna(value):
+            return JsonResponse({'message': 'No depth value found for position 221'}, status=204)
+
+        return JsonResponse({'labels': ['221'], 'values': [round(float(value), 2)]})
+
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
+    
+def get_filtered_chart_data_st25mv(request):
+    try:
+        # --- Get and validate filters ---
+        date = request.GET.get('date')
+        line_no = request.GET.get('line')
+        shift = request.GET.get('shift')
+
+        if not date or not line_no or not shift:
+            return JsonResponse({'message': 'Missing query parameters: date, line, shift'}, status=400)
+
+        # --- Normalize filters ---
+        date = date.strip()
+        line_no = line_no.strip().upper()
+        shift = shift.strip().lower()
+
+        # --- Load Excel and prepare ---
+        excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+        df = pd.read_excel(excel_path, header=2)
+        df.columns = [str(col).strip() for col in df.columns]
+
+        df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
+        df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
+        df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
+
+        # --- Filter data ---
+        filtered_df = df[
+            (df['DATE'] == date) &
+            (df['LINE NO'] == line_no) &
+            (df['SHIFT'] == shift)
+        ]
+
+        if filtered_df.empty:
+            return JsonResponse({'message': 'No data found for given filter'}, status=404)
+
+        row = filtered_df.iloc[0]
+
+        # --- Positions ---
+        positions = ['201', '202', '211', '212']
+        labels = []
+        values = []
+
+        for pos in positions:
+            if pos in row and pd.notna(row[pos]):
+                labels.append(pos)
+                values.append(round(float(row[pos]), 2))
+
+        if not labels:
+            return JsonResponse({'message': 'No valid ST-25-MV data found'}, status=204)
+
+        return JsonResponse({'labels': labels, 'values': values})
+
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
+
+
+def get_filtered_chart_data_st30(request):
+    try:
+        # Extract filters from query params
+        date = request.GET.get('date')
+        line_no = request.GET.get('line')
+        shift = request.GET.get('shift')
+
+        # Validate inputs
+        if not date or not line_no or not shift:
+            return JsonResponse({'message': 'Missing query parameters: date, line, shift'}, status=400)
+
+        # Normalize inputs
+        date = date.strip()
+        line_no = line_no.strip().upper()
+        shift = shift.strip().lower()
+
+        # Load Excel
+        excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+        df = pd.read_excel(excel_path, header=2)
+        df.columns = [str(col).strip() for col in df.columns]
+
+        # Normalize filter columns
+        df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
+        df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
+        df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
+
+        # Filter data
+        filtered_df = df[
+            (df['DATE'] == date) &
+            (df['LINE NO'] == line_no) &
+            (df['SHIFT'] == shift)
+        ]
+
+        if filtered_df.empty:
+            return JsonResponse({'message': 'No data found for given filter'}, status=404)
+
+        row = filtered_df.iloc[0]
+
+        # Positions for ST-30
+        positions = ['222', '223', '224']
+        labels = []
+        values = []
+
+        for pos in positions:
+            if pos in row and pd.notna(row[pos]):
+                labels.append(pos)
+                values.append(round(float(row[pos]), 2))
+
+        if not labels:
+            return JsonResponse({'message': 'No valid ST-30 data found'}, status=204)
+
+        return JsonResponse({'labels': labels, 'values': values})
+
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
+    
+
+def get_filtered_chart_data_st40(request):
+    try:
+        # Extract filters
+        date = request.GET.get('date')
+        line_no = request.GET.get('line')
+        shift = request.GET.get('shift')
+
+        # Validate
+        if not date or not line_no or not shift:
+            return JsonResponse({'message': 'Missing query parameters: date, line, shift'}, status=400)
+
+        # Normalize
+        date = date.strip()
+        line_no = line_no.strip().upper()
+        shift = shift.strip().lower()
+
+        # Load Excel
+        excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+        df = pd.read_excel(excel_path, header=2)
+        df.columns = [str(col).strip() for col in df.columns]
+
+        df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
+        df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
+        df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
+
+        # Filter
+        filtered_df = df[
+            (df['DATE'] == date) &
+            (df['LINE NO'] == line_no) &
+            (df['SHIFT'] == shift)
+        ]
+
+        if filtered_df.empty:
+            return JsonResponse({'message': 'No data found for given filter'}, status=404)
+
+        row = filtered_df.iloc[0]
+
+        # ST-40 positions
+        positions = ['301', '401']
+        labels = []
+        values = []
+
+        for pos in positions:
+            if pos in row and pd.notna(row[pos]):
+                labels.append(pos)
+                values.append(round(float(row[pos]), 2))
+
+        if not labels:
+            return JsonResponse({'message': 'No valid ST-40 depth data found'}, status=204)
+
+        return JsonResponse({'labels': labels, 'values': values})
+
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'message': f'Internal Server Error: {str(e)}'}, status=500)
+
+
+from django.http import JsonResponse
+import pandas as pd
+import os
+from django.conf import settings
+
+def info_card_api(request):
+    try:
+        excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+        df = pd.read_excel(excel_path, header=2)
+
+        df.columns = [str(c).strip() for c in df.columns]
+
+        date = request.GET.get('date', '').strip()
+        line = request.GET.get('line', '').strip().upper()
+        shift = request.GET.get('shift', '').strip().lower()
+
+        df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
+        df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
+        df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
+
+        filtered = df[
+            (df['DATE'] == date) &
+            (df['LINE NO'] == line) &
+            (df['SHIFT'] == shift)
+        ]
+
+        if filtered.empty:
+            return JsonResponse({"message": "No data found"}, status=404)
+
+        row = filtered.iloc[0]
+
+        # ✅ Convert all values to str() to avoid TypeError
+        data = {
+            "DATE": str(row.get('DATE', '')),
+            "LINE NO": str(row.get('LINE NO', '')),
+            "SHIFT": str(row.get('SHIFT', '')),
+            "PART NO": str(row.get('PART NO', '')),
+            "PART TYPE": str(row.get('PART TYPE', '')),
+            "SUPERVISOR": str(row.get('SUPERVISOR', '')),
+            "ST-15 DMC NO": str(row.get('ST-15 DMC NO', '')),
+            "ST-30 DMC NO": str(row.get('ST-30 DMC NO', '')),
+            "CHECKED BY": str(row.get('CHECKED BY', '')),
+        }
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def total_inspections_api(request):
+    try:
+        excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+        df = pd.read_excel(excel_path, header=2)  # Skips top 2 rows, third becomes header
+
+        total_rows = df.shape[0]  # Total data rows (after header row)
+        return JsonResponse({'total': total_rows})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': str(e)}, status=500)
+    
+
+
+
 

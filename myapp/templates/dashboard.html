@@ -1,4 +1,4 @@
-{% comment %} <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -12,7 +12,7 @@
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #f0f2f5;
+      background: linear-gradient(to right, #e0e7ff, #f0f5ff);
       color: #333;
     }
 
@@ -65,6 +65,7 @@
     }
 
     .summary-card {
+      
       flex: 1;
       min-width: 220px;
       background: white;
@@ -115,8 +116,63 @@
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
 }
+.info-card {
+  background: white;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(72, 85, 99, 0.1);
+  padding: 10px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  border-left: 4px solid #6366f1;
+  margin: 10px 0;
+  font-size: 13px;
+  line-height: 1.2;
+}
 
+.info-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f1f5ff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  white-space: nowrap;
+}
+
+.info-label {
+  background-color: #6366f1;
+  color: #ffffff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.info-value {
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .info-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
 .card {
+  
   position: relative;
   background: #fff;
   padding: 16px;
@@ -124,6 +180,7 @@
   border-radius: 16px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
   text-align: center;
+  
 }
 
 .card h2 {
@@ -144,6 +201,7 @@
   height: 220px;  /* Best-fit height inside card */
   margin-top: 10px;
   margin-bottom: 10px;
+  
 }
 
 .notation {
@@ -174,7 +232,6 @@
 
 .circle.red { background-color: red; }
 .circle.green { background-color: green; }
-
 
 
 
@@ -210,7 +267,7 @@
     <div class="summary">
       <div class="summary-card">
         <strong>📊 Total Inspections</strong>
-        <p>300</p>
+       <p id="total-inspections-count">0</p>
       </div>
       <div class="summary-card">
         <strong>✅ Total Verified by MFQ</strong>
@@ -222,11 +279,107 @@
       </div>
     </div>
 
+    <script>
+  async function loadTotalInspections() {
+    try {
+      const res = await fetch('/api/total-inspections/');
+      const data = await res.json();
+
+      if (res.ok && data.total !== undefined) {
+        document.getElementById('total-inspections-count').textContent = data.total;
+      } else {
+        console.warn("Unable to load total inspections count");
+      }
+    } catch (err) {
+      console.error("Error loading inspection count:", err);
+    }
+  }
+
+  // Call on page load
+  loadTotalInspections();
+</script>
+
     <!-- Charts Section -->
-    <div class="section-title">Visual Analysis Inspection Station Wise</div>
-<P class=axis-note >X-AXIS ( Staking Positions ) &nbsp;|&nbsp; Y-axis (Staking Depth )</p>
-   <div class="grid">
     
+    <div class="section-title">Visual Analysis Inspection Station Wise</div>
+
+
+  <div class="info-card">
+  <div class="info-field">
+    <div class="info-label">Date</div>
+    <div class="info-value" id="info-date"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">Line No</div>
+    <div class="info-value" id="info-line"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">Shift</div>
+    <div class="info-value" id="info-shift"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">Supervisor</div>
+    <div class="info-value" id="info-supervisor"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">Part No</div>
+    <div class="info-value" id="info-part-no"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">Part Type</div>
+    <div class="info-value" id="info-part-type"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">ST-15 DMC</div>
+    <div class="info-value" id="info-st15-dmc"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">ST-30 DMC</div>
+    <div class="info-value" id="info-st30-dmc"></div>
+  </div>
+
+  <div class="info-field">
+    <div class="info-label">Checked By</div>
+    <div class="info-value" id="info-checked-by"></div>
+  </div>
+</div>
+
+<!-- =================== JavaScript =================== -->
+<script>
+  async function updateInfoCard(date, line, shift) {
+    try {
+      const res = await fetch(`/api/info-card-data/?date=${encodeURIComponent(date)}&line=${encodeURIComponent(line)}&shift=${encodeURIComponent(shift)}`);
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Failed to load card data");
+
+      document.getElementById("info-date").textContent = data["DATE"] || "-";
+      document.getElementById("info-line").textContent = data["LINE NO"] || "-";
+      document.getElementById("info-shift").textContent = data["SHIFT"] || "-";
+      document.getElementById("info-supervisor").textContent = data["SUPERVISOR"] || "-";
+      document.getElementById("info-part-no").textContent = data["PART NO"] || "-";
+      document.getElementById("info-part-type").textContent = data["PART TYPE"] || "-";
+      document.getElementById("info-st15-dmc").textContent = data["ST-15 DMC NO"] || "-";
+      document.getElementById("info-st30-dmc").textContent = data["ST-30 DMC NO"] || "-";
+      document.getElementById("info-checked-by").textContent = data["CHECKED BY"] || "-";
+    } catch (err) {
+      console.error("Info Card Error:", err.message);
+    }
+  }
+
+  // Call this after applying filters:
+  updateInfoCard(date, line, shift);
+</script>
+
+   <div class="grid">
+
     <!-- ST-15 Chart -->
    <div class="card">
   <h2>ST-15 Accumulator Cap</h2>
@@ -312,395 +465,439 @@
 </div>
 
 
-
-
   </div>
 
   <script>
-    // CHART 1 - ST-15----------------------------------------------------------------------
+ // ------------------------------
+// COMMON FILTER BUTTON HANDLER
+// ------------------------------
 
-const ctx1 = document.getElementById("chart1").getContext("2d");
-
-// Gradient color
-const grad1 = ctx1.createLinearGradient(0, 0, 0, 300);
-grad1.addColorStop(0, "#36d1dc");
-grad1.addColorStop(1, "#5b86e5");
-
-// Background plugin
-const plugin1 = {
-  id: "bg1",
-  beforeDatasetsDraw(chart) {
-    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
-    ctx.save();
-
-    // Red Zone
-    ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
-    ctx.fillRect(left, y.getPixelForValue(1.50), right - left, y.getPixelForValue(0.70) - y.getPixelForValue(1.50));
-
-    // Green Zone
-    ctx.fillStyle = "rgba(0, 128, 0, 0.15)";
-    ctx.fillRect(left, y.getPixelForValue(1.4), right - left, y.getPixelForValue(0.8) - y.getPixelForValue(1.4));
-
-    // Spec limits
-    ctx.setLineDash([5, 5]);
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = "red";
-    [0.75, 1.45].forEach(val => {
-      ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(val));
-      ctx.lineTo(right, y.getPixelForValue(val));
-      ctx.stroke();
-    });
-
-    // Control limits
-    ctx.strokeStyle = "green";
-    [0.8, 1.4].forEach(val => {
-      ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(val));
-      ctx.lineTo(right, y.getPixelForValue(val));
-      ctx.stroke();
-    });
-
-    ctx.restore();
-  }
-};
-
-// Chart instance with dummy data
-const myChart = new Chart(ctx1, {
-  type: "bar",
-  data: {
-    labels: [], // Set during fetch
-    datasets: [{
-      data: [],
-      backgroundColor: grad1,
-      borderRadius: 4,
-      barThickness: 35,
-    }]
-  },
-  options: {
-    plugins: {
-      legend: { display: false },
-      datalabels: {
-        color: "#000",
-        anchor: "end",
-        align: "top",
-        font: { weight: "bold", size: 11 },
-        formatter: val => val.toFixed(2)
-      },
-      tooltip: {
-        callbacks: {
-          label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
-        }
-      }
-    },
-    scales: {
-      y: {
-        min: 0.7,
-        max: 1.5,
-        ticks: {
-          stepSize: 0.05,
-          font: { size: 11 },
-          callback: val => val.toFixed(2)
-        }
-      },
-      x: {
-        grid: { display: false },
-        ticks: { font: { size: 11 } }
-      }
-    },
-    responsive: true,
-    maintainAspectRatio: false
-  },
-  plugins: [ChartDataLabels, plugin1]
-});
-
-// Fetch function
-async function fetchChartData(date, shift, line) {
-  try {
-    const res = await fetch(`/api/chart-data/?date=${date}&shift=${encodeURIComponent(shift)}&line=${encodeURIComponent(line)}`);
-    if (!res.ok) throw new Error(`Server returned ${res.status}`);
-
-    const data = await res.json();
-    console.log("Received chart data:", data);
-
-    if (data && Array.isArray(data.labels) && Array.isArray(data.data) && data.labels.length === data.data.length) {
-      myChart.data.labels = data.labels;
-      myChart.data.datasets[0].data = data.data;
-      myChart.update();
-    } else {
-      alert("Chart data missing required fields or format is incorrect.");
-      console.error("Expected: { labels: [...], data: [...] }, but got:", data);
-    }
-
-  } catch (err) {
-    console.error("Failed to fetch chart data:", err);
-    alert("Failed to load chart data: " + err.message);
-  }
-}
-
-// Filter event
 document.getElementById("apply-filters").addEventListener("click", () => {
   const date = document.getElementById("filter-date").value;
   const line = document.getElementById("filter-line").value;
   const shift = document.getElementById("filter-shift").value;
 
   if (date && line && shift) {
-    fetchChartData(date, shift, line);
+    fetchST15Chart(date, shift, line);
+    fetchST20Chart(date, shift, line);
+    updateST25CChart(date, line, shift);  // Call this chart function
+    updateST25MVChart(date, line, shift);
+    updateST30Chart(date, line, shift);
+    updateST40Chart(date, line, shift);
+    updateInfoCard(date, line, shift);
+    updateST45_85_Status(date, line, shift);
+    
   } else {
     alert("Please select all filters.");
   }
 });
 
+    // CHART 1 - ST-15----------------------------------------------------------------------
 
-//st-20 ----------------------------------------------------------------------------------
+// ------------------------------
+// CHART 1 - ST-15 Configuration
+// ------------------------------
 
+let st15Chart = null;
 
+function renderST15Chart(labels, data) {
+  const ctx1 = document.getElementById("chart1").getContext("2d");
 
-  const ctx2 = document.getElementById("chart2").getContext("2d");
+  if (st15Chart) st15Chart.destroy();
 
-// Gradient fill for bars
-const grad2 = ctx2.createLinearGradient(0, 0, 0, 300);
-grad2.addColorStop(0, "#36d1dc");
-grad2.addColorStop(1, "#5b86e5");
+  const grad1 = ctx1.createLinearGradient(0, 0, 0, 300);
+  grad1.addColorStop(0, "#36d1dc");
+  grad1.addColorStop(1, "#5b86e5");
 
-// Background plugin for zones
-const plugin2 = {
-  id: "bg2",
-  beforeDatasetsDraw(chart) {
-    const {
-      ctx,
-      chartArea: { left, right },
-      scales: { y },
-    } = chart;
-    ctx.save();
+  const plugin1 = {
+    id: "bg1",
+    beforeDatasetsDraw(chart) {
+      const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+      ctx.save();
 
-    // Red Spec Range
-    ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
-    ctx.fillRect(
-      left,
-      y.getPixelForValue(0.90),
-      right - left,
-      y.getPixelForValue(0.40) - y.getPixelForValue(0.90)
-    );
+      // Red zone (spec limits)
+      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+      ctx.fillRect(left, y.getPixelForValue(1.50), right - left, y.getPixelForValue(0.70) - y.getPixelForValue(1.50));
 
-    // Green Control Range
-    ctx.fillStyle = "rgba(0, 128, 0, 0.12)";
-    ctx.fillRect(
-      left,
-      y.getPixelForValue(0.80),
-      right - left,
-      y.getPixelForValue(0.55) - y.getPixelForValue(0.80)
-    );
+      // Green zone (control limits)
+      ctx.fillStyle = "rgba(0, 128, 0, 0.15)";
+      ctx.fillRect(left, y.getPixelForValue(1.4), right - left, y.getPixelForValue(0.8) - y.getPixelForValue(1.4));
 
-    // Dashed Lines
-    ctx.setLineDash([5, 5]);
-    ctx.lineWidth = 1.5;
+      // Dashed spec limit lines
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "red";
+      [0.75, 1.45].forEach(val => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(val));
+        ctx.lineTo(right, y.getPixelForValue(val));
+        ctx.stroke();
+      });
 
-    // Red Spec Lines
-    ctx.strokeStyle = "red";
-    [0.50, 0.85].forEach((v) => {
-      ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(v));
-      ctx.lineTo(right, y.getPixelForValue(v));
-      ctx.stroke();
-    });
+      // Dashed control limit lines
+      ctx.strokeStyle = "green";
+      [0.8, 1.4].forEach(val => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(val));
+        ctx.lineTo(right, y.getPixelForValue(val));
+        ctx.stroke();
+      });
 
-    // Green Control Lines
-    ctx.strokeStyle = "green";
-    [0.55, 0.80].forEach((v) => {
-      ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(v));
-      ctx.lineTo(right, y.getPixelForValue(v));
-      ctx.stroke();
-    });
-
-    ctx.restore();
-  },
-};
-
-// Render chart
-new Chart(ctx2, {
-  type: "bar",
-  data: {
-    labels: ["311", "312", "411", "412", "531", "532", "541", "542"],
-    datasets: [
-      {
-        data: [0.64, 0.64, 0.66, 0.66, 0.68, 0.66, 0.71, 0.71],
-        backgroundColor: grad2,
-        borderRadius: 4,
-        barThickness: 25,
-        
-      },
-    ],
-  },
- options: {
-  layout: {
-    padding: {
-      top: 0,
-      bottom: 10
+      ctx.restore();
     }
-  },
-  plugins: {
-    legend: { display: false },
-    datalabels: {
-      color: "#000",
-      anchor: "end",
-      align: "top",
-      font: { weight: "bold", size: 11 },
-      formatter: (val) => val.toFixed(2),
-    },
-  },
-  scales: {
-    y: {
-      min: 0.4,
-      max: 0.9,
-      ticks: { stepSize: 0.1 },
-    },
-    x: {
-      grid: { display: false },
-      ticks: { font: { size: 10 } },
-    },
-  },
-  responsive: true,
-  maintainAspectRatio: false,
-},
+  };
 
-  plugins: [ChartDataLabels, plugin2],
+  st15Chart = new Chart(ctx1, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: grad1,
+        borderRadius: 4,
+        barThickness: 35
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          color: "#000",
+          anchor: "end",
+          align: "top",
+          font: { weight: "bold", size: 11 },
+          formatter: val => val.toFixed(2)
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 0.7,
+          max: 1.5,
+          ticks: {
+            stepSize: 0.05,
+            font: { size: 11 },
+            callback: val => val.toFixed(2)
+          },
+          grid: {
+            drawTicks: false,
+            color: "rgba(0,0,0,0.05)"
+          }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        }
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    },
+    plugins: [ChartDataLabels, plugin1]
+  });
+}
+
+async function fetchST15Chart(date, shift, line) {
+  try {
+    const res = await fetch(`/api/chart-data/?date=${encodeURIComponent(date)}&shift=${encodeURIComponent(shift)}&line=${encodeURIComponent(line)}`);
+    const data = await res.json();
+
+    if (Array.isArray(data.labels) && Array.isArray(data.data)) {
+      renderST15Chart(data.labels, data.data);
+    }
+  } catch (err) {
+    console.error("ST-15 Chart Load Error:", err);
+  }
+}
+
+// ✅ Default dummy values on page load
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultLabels = ["501", "502"];
+  const defaultValues = [1.23, 1.18];  // Within green zone
+  renderST15Chart(defaultLabels, defaultValues);
 });
 
+// ------------------------------
+// CHART 2 - ST-20 Configuration
+// ------------------------------
+let st20Chart = null;
+
+function renderST20Chart(labels, values) {
+  const ctx2 = document.getElementById("chart2").getContext("2d");
+
+  if (st20Chart) st20Chart.destroy();
+
+  const grad2 = ctx2.createLinearGradient(0, 0, 0, 300);
+  grad2.addColorStop(0, "#36d1dc");
+  grad2.addColorStop(1, "#5b86e5");
+
+  const plugin2 = {
+    id: "bg2",
+    beforeDatasetsDraw(chart) {
+      const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+      ctx.save();
+
+      // Spec range (red)
+      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+      ctx.fillRect(left, y.getPixelForValue(0.90), right - left, y.getPixelForValue(0.40) - y.getPixelForValue(0.90));
+
+      // Control range (green)
+      ctx.fillStyle = "rgba(0, 128, 0, 0.12)";
+      ctx.fillRect(left, y.getPixelForValue(0.80), right - left, y.getPixelForValue(0.55) - y.getPixelForValue(0.80));
+
+      // Dashed spec lines
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "red";
+      [0.50, 0.85].forEach(val => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(val));
+        ctx.lineTo(right, y.getPixelForValue(val));
+        ctx.stroke();
+      });
+
+      // Dashed control lines
+      ctx.strokeStyle = "green";
+      [0.55, 0.80].forEach(val => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(val));
+        ctx.lineTo(right, y.getPixelForValue(val));
+        ctx.stroke();
+      });
+
+      ctx.restore();
+    }
+  };
+
+  st20Chart = new Chart(ctx2, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: grad2,
+        borderRadius: 4,
+        barThickness: 25
+      }]
+    },
+    options: {
+      layout: { padding: { top: 0, bottom: 10 } },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          color: "#000",
+          anchor: "end",
+          align: "top",
+          font: { weight: "bold", size: 11 },
+          formatter: val => val.toFixed(2)
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 0.4,
+          max: 0.9,
+          ticks: {
+            stepSize: 0.1,
+            font: { size: 10 },
+            callback: val => val.toFixed(2)
+          },
+          grid: {
+            drawTicks: false,
+            color: "rgba(0,0,0,0.05)"
+          }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 10 } }
+        }
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    },
+    plugins: [ChartDataLabels, plugin2]
+  });
+}
+
+async function fetchST20Chart(date, shift, line) {
+  try {
+    const res = await fetch(`/api/chart-data-st20/?date=${encodeURIComponent(date)}&line=${encodeURIComponent(line)}&shift=${encodeURIComponent(shift)}`);
+    const data = await res.json();
+
+    if (Array.isArray(data.labels) && Array.isArray(data.values)) {
+      renderST20Chart(data.labels, data.values);
+    }
+  } catch (err) {
+    console.error("ST-20 Chart Load Error:", err);
+  }
+}
+
+// ✅ Load with default dummy data on page load
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultLabels = ["311", "312", "411", "412", "531", "532", "541", "542"];
+  const defaultValues = [0.73, 0.75, 0.78, 0.76, 0.77, 0.74, 0.79, 0.76];  // Good-looking safe values
+  renderST20Chart(defaultLabels, defaultValues);
+});
 
 
     // CHART 3 - ST-25 c -----------------------------------------------------------------------------------
 
 
-   const ctx3 = document.getElementById('chart3').getContext('2d');
-const value = 0.39;
+  let chart3Instance = null;
 
-new Chart(ctx3, {
-  type: 'bar',
-  data: {
-    labels: ['221'],
-    datasets: [
-      {
-        label: 'Low',
-        data: [0.30],
-        backgroundColor: 'rgba(255,0,0,0.12)',
-        barThickness: 50,
-        stack: 's'
+function createST25CChart(value = 0.42) {
+  const ctx3 = document.getElementById("chart3").getContext("2d");
+
+  if (chart3Instance) chart3Instance.destroy();
+
+  chart3Instance = new Chart(ctx3, {
+    type: "bar",
+    data: {
+      labels: ["221"],
+      datasets: [
+        {
+          label: "Low",
+          data: [0.30],
+          backgroundColor: "rgba(255,0,0,0.12)",
+          barThickness: 50,
+          stack: "s"
+        },
+        {
+          label: "Control",
+          data: [0.15],
+          backgroundColor: "rgba(0,128,0,0.18)",
+          barThickness: 50,
+          stack: "s"
+        },
+        {
+          label: "High",
+          data: [0.25],
+          backgroundColor: "rgba(255,0,0,0.12)",
+          barThickness: 50,
+          stack: "s"
+        },
+        {
+          label: "Actual",
+          type: "line",
+          data: [value],
+          pointBackgroundColor: "#000",
+          pointBorderColor: "#fff",
+          pointBorderWidth: 2,
+          pointRadius: 8,
+          showLine: false
+        }
+      ]
+    },
+    options: {
+      indexAxis: "y",
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: () => `Depth: ${value.toFixed(2)} mm`
+          }
+        }
       },
-      {
-        label: 'Control',
-        data: [0.15],
-        backgroundColor: 'rgba(0,128,0,0.18)',
-        barThickness: 50,
-        stack: 's'
+      scales: {
+        x: {
+          min: 0.20,
+          max: 0.65,
+          ticks: {
+            stepSize: 0.05,
+            color: "#555",
+            font: { size: 11 }
+          },
+          grid: {
+            drawTicks: true,
+            color: "rgba(200,200,200,0.2)"
+          }
+        },
+        y: {
+          ticks: { display: false },
+          grid: { display: false }
+        }
       },
+      responsive: true,
+      maintainAspectRatio: false
+    },
+    plugins: [
       {
-        label: 'High',
-        data: [0.25],
-        backgroundColor: 'rgba(255,0,0,0.12)',
-        barThickness: 50,
-        stack: 's'
-      },
-      {
-        label: 'Actual',
-        type: 'line',
-        data: [value],
-        pointBackgroundColor: '#000',
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        pointRadius: 8,  // Increased pointer size
-        showLine: false
+        id: "labelDot",
+        afterDatasetsDraw(chart) {
+          const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
+          ctx.save();
+
+          // Draw black dot label
+          ctx.fillStyle = "#000";
+          ctx.font = "bold 12px Segoe UI";
+          ctx.textAlign = "center";
+          ctx.fillText(`${value.toFixed(2)} mm`, x.getPixelForValue(value), bottom - 40);
+
+          // Control limit lines (green)
+          ctx.beginPath();
+          ctx.setLineDash([5, 5]);
+          ctx.strokeStyle = "green";
+          ctx.lineWidth = 1.5;
+
+          [0.30, 0.45].forEach(val => {
+            ctx.moveTo(x.getPixelForValue(val), top);
+            ctx.lineTo(x.getPixelForValue(val), bottom);
+            ctx.stroke();
+          });
+
+          // Spec limit lines (red)
+          ctx.strokeStyle = "red";
+
+          [0.20, 0.60].forEach(val => {
+            ctx.beginPath();
+            ctx.moveTo(x.getPixelForValue(val), top);
+            ctx.lineTo(x.getPixelForValue(val), bottom);
+            ctx.stroke();
+          });
+
+          ctx.restore();
+        }
       }
     ]
-  },
-  options: {
-    indexAxis: 'y',
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: () => `Depth: ${value.toFixed(2)} mm`
-        }
-      }
-    },
-    scales: {
-      x: {
-        min: 0.20,
-        max: 0.65,
-        ticks: {
-          stepSize: 0.05,
-          color: '#555',
-          font: { size: 11 }
-        },
-        grid: {
-          drawTicks: true,
-          color: 'rgba(200,200,200,0.2)'
-        }
-      },
-      y: {
-        ticks: { display: false },
-        grid: { display: false }
-      }
-    },
-    responsive: true,
-    maintainAspectRatio: false
-  },
- plugins: [
-  {
-    id: 'labelDot',
-    afterDatasetsDraw(chart) {
-      const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
-      ctx.save();
+  });
+}
 
-      // Text Label on Black Dot
-      ctx.fillStyle = '#000';
-      ctx.font = 'bold 12px Segoe UI';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${value.toFixed(2)} mm`, x.getPixelForValue(value), bottom - 40);
+async function updateST25CChart(date, line, shift) {
+  try {
+    const res = await fetch(`/api/chart-data-st25c/?date=${encodeURIComponent(date)}&line=${encodeURIComponent(line)}&shift=${encodeURIComponent(shift)}`);
+    if (!res.ok) throw new Error("Server error");
 
-      // Green Vertical Dashed Lines at 0.30 and 0.45
-      ctx.beginPath();
-      ctx.setLineDash([5, 5]);
-      ctx.strokeStyle = 'green';
-      ctx.lineWidth = 1.5;
-      ctx.moveTo(x.getPixelForValue(0.30), top);
-      ctx.lineTo(x.getPixelForValue(0.30), bottom);
-      ctx.stroke();
+    const result = await res.json();
+    const value = result.values[0]; // Depth from backend
+    createST25CChart(value);
 
-      ctx.beginPath();
-      ctx.moveTo(x.getPixelForValue(0.45), top);
-      ctx.lineTo(x.getPixelForValue(0.45), bottom);
-      ctx.stroke();
-
-      // 🔴 Red Vertical Dashed Lines at 0.20 and 0.60
-      ctx.strokeStyle = 'red';
-      
-      ctx.beginPath();
-      ctx.moveTo(x.getPixelForValue(0.20), top);
-      ctx.lineTo(x.getPixelForValue(0.20), bottom);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(x.getPixelForValue(0.60), top);
-      ctx.lineTo(x.getPixelForValue(0.60), bottom);
-      ctx.stroke();
-
-      ctx.restore();
-    }
+  } catch (err) {
+    console.error("ST-25-C Chart Load Error:", err);
+    alert("NO DATA FOUND FOR THIS DATE ");
   }
-]
+}
 
+// ✅ Default dummy value when page loads
+document.addEventListener("DOMContentLoaded", () => {
+  createST25CChart(0.42); // Default dummy depth
 });
 
 
     // CHART 4 - ST-25 MV-------------------------------------------------------------------------------
+let chartST25MV = null;
 
+function createST25MVChart(labels, values) {
+  const ctx4 = document.getElementById('chart4').getContext('2d');
 
+  if (chartST25MV) chartST25MV.destroy();
 
-
-
- const ctx4 = document.getElementById('chart4').getContext('2d');
   const grad4 = ctx4.createLinearGradient(0, 0, 0, 300);
   grad4.addColorStop(0, '#36d1dc');
   grad4.addColorStop(1, '#5b86e5');
@@ -712,7 +909,6 @@ new Chart(ctx3, {
       ctx.save();
 
       // Spec Range Background (Red)
-      
       ctx.fillStyle = 'rgba(255, 0, 0, 0.1)';
       ctx.fillRect(left, y.getPixelForValue(0.95), right - left, y.getPixelForValue(0.60) - y.getPixelForValue(0.95));
 
@@ -746,12 +942,12 @@ new Chart(ctx3, {
     }
   };
 
-  new Chart(ctx4, {
+  chartST25MV = new Chart(ctx4, {
     type: 'bar',
     data: {
-      labels: ['201', '202', '211', '212'],
+      labels: labels,
       datasets: [{
-        data: [0.76, 0.76, 0.76, 0.77],
+        data: values,
         backgroundColor: grad4,
         borderRadius: 4,
         barThickness: 35
@@ -792,164 +988,221 @@ new Chart(ctx3, {
     },
     plugins: [ChartDataLabels, plugin4]
   });
+}
 
+async function updateST25MVChart(date, line, shift) {
+  try {
+    const url = `/api/chart-data-st25mv/?date=${encodeURIComponent(date)}&line=${encodeURIComponent(line)}&shift=${encodeURIComponent(shift)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Server error");
+
+    createST25MVChart(data.labels, data.values);
+  } catch (err) {
+    console.error("ST-25-MV Chart Load Error:", err.message || err);
+  }
+}
+
+// ✅ On DOM ready: show default dummy chart
+document.addEventListener("DOMContentLoaded", () => {
+  // Default dummy values
+  createST25MVChart(["201", "202", "211", "212"], [0.76, 0.76, 0.76, 0.77]);
+
+  // Optional: filter button binding
+  const btn = document.getElementById("applyFiltersBtn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const date = document.getElementById("filter-date").value;
+      const line = document.getElementById("filter-line").value;
+      const shift = document.getElementById("filter-shift").value;
+
+      updateST25MVChart(date, line, shift);
+    });
+  }
+});
 //st-30------------------------------------------------------------------------------------------------
 
 
-const ctx30 = document.getElementById('st30Chart').getContext('2d');
+let chartST30 = null;
 
-// Gradient color
-const grad30 = ctx30.createLinearGradient(0, 0, 0, 300);
-grad30.addColorStop(0, '#36d1dc');
-grad30.addColorStop(1, '#5b86e5');
+function createST30Chart(labels, values) {
+  const ctx30 = document.getElementById('st30Chart').getContext('2d');
 
-// Highlight plugin
-const plugin30 = {
-  id: 'bg30',
-  beforeDatasetsDraw(chart) {
-    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
-    ctx.save();
+  if (chartST30) chartST30.destroy();
 
-    // Red zone (spec range)
-   ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
-    ctx.fillRect(left, y.getPixelForValue(1.5), right - left, y.getPixelForValue(0.4) - y.getPixelForValue(1.5));
+  const grad30 = ctx30.createLinearGradient(0, 0, 0, 300);
+  grad30.addColorStop(0, '#36d1dc');
+  grad30.addColorStop(1, '#5b86e5');
 
-    // Green zone (control range)
-  ctx.fillStyle = "rgba(0, 128, 0, 0.15)";
-    ctx.fillRect(left, y.getPixelForValue(1.3), right - left, y.getPixelForValue(0.65) - y.getPixelForValue(1.3));
-
-    // Spec dashed lines
-    ctx.setLineDash([5, 5]);
-      ctx.lineWidth = 1.5;
-    ctx.strokeStyle = 'red';
-    [0.5, 1.4].forEach(val => {
-      ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(val));
-      ctx.lineTo(right, y.getPixelForValue(val));
-      ctx.stroke();
-    });
-
-    // Control dashed lines
-    ctx.strokeStyle = 'green';
-    [0.65, 1.3].forEach(val => {
-      ctx.beginPath();
-      ctx.moveTo(left, y.getPixelForValue(val));
-      ctx.lineTo(right, y.getPixelForValue(val));
-      ctx.stroke();
-    });
-
-    ctx.restore();
-  }
-};
-
-new Chart(ctx30, {
-  type: 'bar',
-  data: {
-    labels: ['222', '223', '224'],
-    datasets: [{
-      label: 'Staking Depth (mm)',
-      data: [0.98, 0.96, 0.94],
-      backgroundColor: grad30,
-      borderRadius: 4,
-      barThickness: 36,
-      borderSkipped: false
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    layout: { padding: { top: 5, bottom: 10, left: 10, right: 10 } },
-    plugins: {
-      legend: { display: false },
-      datalabels: {
-         color: "#000",
-        anchor: 'end',
-        align: 'top',
-        font: { size: 11, weight: 'bold' },
-        formatter: val => val.toFixed(2)
-      },
-      tooltip: {
-        callbacks: {
-          label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
-        }
-      }
-    },
-    scales: {
-      y: {
-        min: 0.4,
-        max: 1.5,
-        ticks: {
-          stepSize: 0.1,
-          font: { size: 11 }
-        },
-        grid: {
-          drawTicks: false,
-          color: 'rgba(0,0,0,0.05)'
-        }
-      },
-      x: {
-        ticks: { font: { size: 11 } },
-        grid: { display: false }
-      }
-    }
-  },
-  plugins: [ChartDataLabels, plugin30]
-});
-
-
-// st-40----------------------------------------------------------------------------------------------------
-
-
- const ctx6 = document.getElementById("chart6").getContext("2d");
-
-  // Beautiful gradient color for bars
-  const grad6 = ctx6.createLinearGradient(0, 0, 0, 300);
-  grad6.addColorStop(0, "#36d1dc");
-  grad6.addColorStop(1, "#5b86e5");
-
-  // Highlight zones plugin for spec and control limits
-  const plugin6 = {
-    id: "bg6",
+  const plugin30 = {
+    id: 'bg30',
     beforeDatasetsDraw(chart) {
-      const {
-        ctx,
-        chartArea: { left, right },
-        scales: { y },
-      } = chart;
+      const { ctx, chartArea: { left, right }, scales: { y } } = chart;
       ctx.save();
 
-      // Spec zone (red)
-     ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
-      ctx.fillRect(
-        left,
-        y.getPixelForValue(0.65),
-        right - left,
-        y.getPixelForValue(0.30) - y.getPixelForValue(0.65)
-      );
+      // Spec range (Red)
+      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+      ctx.fillRect(left, y.getPixelForValue(1.5), right - left, y.getPixelForValue(0.4) - y.getPixelForValue(1.5));
 
-      // Control zone (green)
-   ctx.fillStyle = "rgba(0, 128, 0, 0.15)";
-      ctx.fillRect(
-        left,
-        y.getPixelForValue(0.56),
-        right - left,
-        y.getPixelForValue(0.4) - y.getPixelForValue(0.56)
-      );
+      // Control range (Green)
+      ctx.fillStyle = "rgba(0, 128, 0, 0.15)";
+      ctx.fillRect(left, y.getPixelForValue(1.3), right - left, y.getPixelForValue(0.65) - y.getPixelForValue(1.3));
 
-      // Dotted lines - spec
+      // Dashed lines
       ctx.setLineDash([5, 5]);
-       ctx.lineWidth = 1.5;
-      ctx.strokeStyle = "red";
-      [0.37, 0.6].forEach((val) => {
+      ctx.lineWidth = 1.5;
+
+      ctx.strokeStyle = 'red';
+      [0.5, 1.4].forEach(val => {
         ctx.beginPath();
         ctx.moveTo(left, y.getPixelForValue(val));
         ctx.lineTo(right, y.getPixelForValue(val));
         ctx.stroke();
       });
 
-      // Dotted lines - control
+      ctx.strokeStyle = 'green';
+      [0.65, 1.3].forEach(val => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(val));
+        ctx.lineTo(right, y.getPixelForValue(val));
+        ctx.stroke();
+      });
+
+      ctx.restore();
+    }
+  };
+
+  chartST30 = new Chart(ctx30, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Staking Depth (mm)',
+        data: values,
+        backgroundColor: grad30,
+        borderRadius: 4,
+        barThickness: 36,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: { padding: { top: 5, bottom: 10, left: 10, right: 10 } },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          color: "#000",
+          anchor: 'end',
+          align: 'top',
+          font: { size: 11, weight: 'bold' },
+          formatter: val => val.toFixed(2)
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => `Depth: ${ctx.parsed.y.toFixed(2)} mm`
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 0.4,
+          max: 1.5,
+          ticks: {
+            stepSize: 0.1,
+            font: { size: 11 }
+          },
+          grid: {
+            drawTicks: false,
+            color: 'rgba(0,0,0,0.05)'
+          }
+        },
+        x: {
+          ticks: { font: { size: 11 } },
+          grid: { display: false }
+        }
+      }
+    },
+    plugins: [ChartDataLabels, plugin30]
+  });
+}
+
+// ✅ Fetch and update chart
+async function updateST30Chart(date, line, shift) {
+  try {
+    const res = await fetch(`/api/chart-data-st30/?date=${encodeURIComponent(date)}&line=${encodeURIComponent(line)}&shift=${encodeURIComponent(shift)}`);
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Server error");
+
+    createST30Chart(data.labels, data.values);
+  } catch (err) {
+    console.error("ST-30 Chart Load Error:", err.message || err);
+  }
+}
+
+// ✅ On DOM ready: Show default dummy chart and bind filter
+document.addEventListener("DOMContentLoaded", () => {
+  // Dummy data for initial load
+  createST30Chart(["222", "223", "224"], [0.95, 0.93, 0.94]);
+
+  // Optional: trigger on filter apply button
+  const btn = document.getElementById("applyFiltersBtn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const date = document.getElementById("filter-date").value;
+      const line = document.getElementById("filter-line").value;
+      const shift = document.getElementById("filter-shift").value;
+
+      updateST30Chart(date, line, shift);
+    });
+  }
+});
+
+
+// st-40----------------------------------------------------------------------------------------------------
+
+
+let chartST40 = null;
+
+function createST40Chart(labels, values) {
+  const ctx6 = document.getElementById("chart6").getContext("2d");
+
+  if (chartST40) chartST40.destroy();
+
+  const grad6 = ctx6.createLinearGradient(0, 0, 0, 300);
+  grad6.addColorStop(0, "#36d1dc");
+  grad6.addColorStop(1, "#5b86e5");
+
+  const plugin6 = {
+    id: "bg6",
+    beforeDatasetsDraw(chart) {
+      const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+      ctx.save();
+
+      // Red (spec zone)
+      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+      ctx.fillRect(left, y.getPixelForValue(0.65), right - left, y.getPixelForValue(0.30) - y.getPixelForValue(0.65));
+
+      // Green (control zone)
+      ctx.fillStyle = "rgba(0, 128, 0, 0.15)";
+      ctx.fillRect(left, y.getPixelForValue(0.56), right - left, y.getPixelForValue(0.4) - y.getPixelForValue(0.56));
+
+      // Dashed lines
+      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1.5;
+
+      ctx.strokeStyle = "red";
+      [0.37, 0.6].forEach(val => {
+        ctx.beginPath();
+        ctx.moveTo(left, y.getPixelForValue(val));
+        ctx.lineTo(right, y.getPixelForValue(val));
+        ctx.stroke();
+      });
+
       ctx.strokeStyle = "green";
-      [0.4, 0.56].forEach((val) => {
+      [0.4, 0.56].forEach(val => {
         ctx.beginPath();
         ctx.moveTo(left, y.getPixelForValue(val));
         ctx.lineTo(right, y.getPixelForValue(val));
@@ -960,14 +1213,13 @@ new Chart(ctx30, {
     },
   };
 
-  // Final Chart.js configuration
-  new Chart(ctx6, {
+  chartST40 = new Chart(ctx6, {
     type: "bar",
     data: {
-      labels: ["301", "401"],
+      labels: labels,
       datasets: [
         {
-          data: [0.43, 0.48],
+          data: values,
           backgroundColor: grad6,
           borderRadius: 4,
           barThickness: 36,
@@ -1008,7 +1260,44 @@ new Chart(ctx30, {
     },
     plugins: [ChartDataLabels, plugin6],
   });
+}
+
+// ✅ Fetch & Update Chart
+async function updateST40Chart(date, line, shift) {
+  try {
+    const res = await fetch(`/api/chart-data-st40/?date=${encodeURIComponent(date)}&line=${encodeURIComponent(line)}&shift=${encodeURIComponent(shift)}`);
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Server error");
+
+    createST40Chart(data.labels, data.values);
+  } catch (err) {
+    console.error("ST-40 Chart Load Error:", err.message || err);
+  }
+}
+
+// ✅ Initialize on page load with default values
+document.addEventListener("DOMContentLoaded", () => {
+  // 🎯 Default dummy values (you can change this to match your Excel expected range visually)
+  createST40Chart(["301", "401"], [0.42, 0.47]);
+
+  // If using a button or auto-filter trigger:
+  const filterBtn = document.getElementById("applyFiltersBtn");
+  if (filterBtn) {
+    filterBtn.addEventListener("click", () => {
+      const date = document.getElementById("filter-date").value;
+      const line = document.getElementById("filter-line").value;
+      const shift = document.getElementById("filter-shift").value;
+
+      updateST40Chart(date, line, shift);
+    });
+  }
+});
+
+
+
+
   </script>
 </body>
 
-</html> {% endcomment %}
+</html>
