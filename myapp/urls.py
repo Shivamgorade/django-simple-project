@@ -16,7 +16,4 @@ urlpatterns = [
      path('api/total-inspections/', views.total_inspections_api, name='total_inspections'),
      
 
-
-
-
 ]
