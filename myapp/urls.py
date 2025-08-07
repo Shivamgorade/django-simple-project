@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+
+
 urlpatterns = [
     path('', views.form_view, name='form_view'),  # Existing form page
     path('dashboard/', views.dashboard_view, name='dashboard'),  # Renders dashboard.html

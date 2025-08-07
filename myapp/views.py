@@ -483,6 +483,11 @@ def total_inspections_api(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 
+import sys
+from django.http import JsonResponse
 
+def python_version_view(request):
+    version = sys.version
+    return JsonResponse({'python_version': version})
 
 
