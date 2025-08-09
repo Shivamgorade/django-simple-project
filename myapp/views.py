@@ -483,6 +483,60 @@ def total_inspections_api(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 
+from django.http import JsonResponse
+import pandas as pd
+import os
+from django.conf import settings
+
+def st45_st85_data_api(request):
+    try:
+        excel_path = os.path.join(settings.BASE_DIR, 'myapp', 'data', 'checksheet_data.xlsx')
+        df = pd.read_excel(excel_path, header=2)
+
+        df.columns = [str(c).strip() for c in df.columns]
+
+        date = request.GET.get('date', '').strip()
+        line = request.GET.get('line', '').strip().upper()
+        shift = request.GET.get('shift', '').strip().lower()
+
+        # Normalize filter columns
+        df['DATE'] = pd.to_datetime(df['DATE']).dt.date.astype(str)
+        df['LINE NO'] = df['LINE NO'].astype(str).str.strip().str.upper()
+        df['SHIFT'] = df['SHIFT'].astype(str).str.strip().str.lower()
+
+        # Filter by date, line, and shift
+        filtered = df[
+            (df['DATE'] == date) &
+            (df['LINE NO'] == line) &
+            (df['SHIFT'] == shift)
+        ]
+
+        if filtered.empty:
+            return JsonResponse({"message": "No data found"}, status=404)
+
+        row = filtered.iloc[0]
+
+        # ✅ Get only the columns you need
+        keys = [
+            "231",
+            "232",
+            "No Damage to Head of ECU Screws After Torquing",
+            "No Damage to ECU Housing (Pins of Customer Connector)"
+        ]
+
+        data = {key: str(row.get(key, '')) for key in keys}
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+
+    
+
 
 
 

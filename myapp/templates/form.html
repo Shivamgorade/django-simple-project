@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     {% load static %}
-    <title>Submit Form</title>
+    <title>ABS10M FIRST PIECE</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}" />
     <meta charset="UTF-8" />
 
@@ -12,21 +12,29 @@
     <title>ABS10M First Piece Inspection</title>
   </head>
 
-  <body>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document
+        .querySelectorAll("form input, form select, form textarea")
+        .forEach((field) => (field.required = true));
+    });
+  </script>
+
     <form method="POST">
       {% csrf_token %}
       <div class="container">
         <header>
           <div class="header-left">
             <h1>First Piece Inspection - ABS10M</h1>
-
             <p>Version 1.1</p>
           </div>
 
           <div class="header-right">
-    <a href="{% url 'dashboard' %}" class="dashboard-btn">Dashboard</a>
-    <span class="bosch-logo">BOSCH</span>
-  </div>
+            <a href="{% url 'dashboard' %}" class="dashboard-btn"
+              >Go To Dashboard</a
+            >
+            <span class="bosch-logo">BOSCH</span>
+          </div>
         </header>
 
         <section class="card">
@@ -36,30 +44,24 @@
           </h2>
 
           <div class="grid">
-          <div class="form-control">
-  <label for="datetime">Date<span>*</span></label>
-  <input
-    type="date"
-    id="datetime"
-    name="date"  
-    required
-  />
-</div>
+            <div class="form-control">
+              <label for="datetime">Date<span>*</span></label>
+              <input type="date" id="datetime" name="date" required />
+            </div>
 
-<script>
-  window.addEventListener("DOMContentLoaded", () => {
-    const datetimeInput = document.getElementById("datetime");
+            <script>
+              window.addEventListener("DOMContentLoaded", () => {
+                const datetimeInput = document.getElementById("datetime");
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, "0");
+                const day = String(now.getDate()).padStart(2, "0");
 
-    const formatted = `${year}-${month}-${day}`;
-    datetimeInput.value = formatted;
-  });
-</script>
-
+                const formatted = `${year}-${month}-${day}`;
+                datetimeInput.value = formatted;
+              });
+            </script>
 
             <div class="form-control">
               <label for="line_no">Line No.<span>*</span></label>
@@ -75,9 +77,9 @@
               <label for="shift">Shift<span>*</span></label>
               <select id="shift" name="shift" required>
                 <option value="" disabled selected>Select Shift</option>
-                <option value="1st">1st </option>
-                <option value="2nd">2nd </option>
-                <option value="3rd">3rd </option>
+                <option value="1st">1st[12:00-07:00]</option>
+                <option value="2nd">2nd[07:00-3:30]</option>
+                <option value="3rd">3rd[03:30-12:00]</option>
               </select>
             </div>
 
@@ -131,20 +133,14 @@
                       "row-pos542",
                     ],
                     st25: [
-                    "row-pos201",
-                    "row-pos202",
-                    "row-pos211",
-                    "row-pos212",
+                      "row-pos201",
+                      "row-pos202",
+                      "row-pos211",
+                      "row-pos212",
                     ],
 
-                    st40: [
-                    "row-pos301",
-                    "row-pos401",
-                    ],
-                     st45: [
-                    "row-pos231",
-                    "row-pos232",
-                    ],
+                    st40: ["row-pos301", "row-pos401"],
+                    st45: ["row-pos231", "row-pos232"],
                   },
                 };
 
@@ -217,744 +213,1135 @@
         </section>
 
         <section class="card">
-  <h2>
-    <span class="step-number">2.<span class="required">*</span></span>
-    ST. 15 - Accumulator Cap Staking
-  </h2>
+          <h2>
+            <span class="step-number">2.<span class="required">*</span></span>
+            ST. 15 - Accumulator Cap Staking
+          </h2>
 
-  <p class="tools-info">
-    Depth Gauge: LS00646 050 032 &nbsp;|&nbsp; Setting Gauge: LY09452 050 010
-  </p>
+          <p class="tools-info">
+            Depth Gauge: LS00646 050 032 &nbsp;|&nbsp; Setting Gauge: LY09452
+            050 010
+          </p>
 
-  <!-- Row 1: DMC -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc">DMC No.</label>
-      <input
-        type="text"
-        id="dmc"
-        name="st15_dmc_no"
-        placeholder="Enter DMC No"
-        required
-      />
-    </div>
-  </div>
+          <!-- Row 1: DMC -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc">DMC No.</label>
+              <input
+                type="text"
+                id="dmc"
+                name="st15_dmc_no"
+                placeholder="Enter DMC No"
+                required
+              />
+            </div>
+          </div>
 
-  <p class="faded-line">Specification: 0.75 - 1.45 mm</p>
+          <p class="faded-line">Specification: 0.75 - 1.45 mm</p>
 
-  <!-- Row 2: Pos. 501 -->
-  <div class="form-row" id="row-pos501">
-    <div class="form-control">
-      <label for="pos501">Pos. 501 - Depth (mm)</label>
-      <input
-        type="number"
-        step="0.01"
-        id="pos501"
-        name="POS_501"
-        placeholder="e.g. 1.10"
-      />
-    </div>
+          <!-- Row 2: Pos. 501 -->
+          <div class="form-row" id="row-pos501">
+            <div class="form-control">
+              <label for="pos501">Pos. 501 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos501"
+                name="POS_501"
+                placeholder="e.g. 1.10"
+              />
+            </div>
 
-    <div class="form-control">
-      <label>Pos. 501 Status</label>
-      <div class="status-group">
-        <label>
-          <input type="radio" name="POS_501_STATUS" value="OK" /> OK
-        </label>
-        <label>
-          <input type="radio" name="POS_501_STATUS" value="NOK" /> NOK
-        </label>
-        <label>
-          <input type="radio" name="POS_501_STATUS" value="NA" /> N/A
-        </label>
-      </div>
-    </div>
-  </div>
+            <div class="form-control">
+              <label>Pos. 501 Status</label>
+              <div class="status-group">
+                <label>
+                  <input type="radio" name="POS_501_STATUS" value="OK" /> OK
+                </label>
+                <label>
+                  <input type="radio" name="POS_501_STATUS" value="NOK" /> NOK
+                </label>
+                <label>
+                  <input type="radio" name="POS_501_STATUS" value="NA" /> N/A
+                </label>
+              </div>
+            </div>
+          </div>
 
-  <!-- Row 3: Pos. 502 -->
-  <div class="form-row" id="row-pos502">
-    <div class="form-control">
-      <label for="pos502">Pos. 502 - Depth (mm)</label>
-      <input
-        type="number"
-        step="0.01"
-        id="pos502"
-        name="POS_502"
-        placeholder="e.g. 1.20"
-      />
-    </div>
+          <!-- Row 3: Pos. 502 -->
+          <div class="form-row" id="row-pos502">
+            <div class="form-control">
+              <label for="pos502">Pos. 502 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos502"
+                name="POS_502"
+                placeholder="e.g. 1.20"
+              />
+            </div>
 
-    <div class="form-control">
-      <label>Pos. 502 Status</label>
-      <div class="status-group">
-        <label>
-          <input type="radio" name="POS_502_STATUS" value="OK" /> OK
-        </label>
-        <label>
-          <input type="radio" name="POS_502_STATUS" value="NOK" /> NOK
-        </label>
-        <label>
-          <input type="radio" name="POS_502_STATUS" value="NA" /> N/A
-        </label>
-      </div>
-    </div>
-  </div>
+            <div class="form-control">
+              <label>Pos. 502 Status</label>
+              <div class="status-group">
+                <label>
+                  <input type="radio" name="POS_502_STATUS" value="OK" /> OK
+                </label>
+                <label>
+                  <input type="radio" name="POS_502_STATUS" value="NOK" /> NOK
+                </label>
+                <label>
+                  <input type="radio" name="POS_502_STATUS" value="NA" /> N/A
+                </label>
+              </div>
+            </div>
+          </div>
 
-  <p class="faded-line">Control Limit: 0.80 - 1.40 mm</p>
+          <p class="faded-line">Control Limit: 0.80 - 1.40 mm</p>
 
-  <!-- Visual Inspection -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label>Visual Inspection of Staking HU (Pos. 501 & 502)</label>
-      <div class="status-group">
-        <label>
-          <input type="radio" name="VISUAL_STAKING_HU" value="OK" /> OK
-        </label>
-        <label>
-          <input type="radio" name="VISUAL_STAKING_HU" value="NOK" /> NOK
-        </label>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-        <section class="card">
-  <h2>
-    <span class="step-number">3.<span class="required">*</span></span>
-    ST. 20 - Ball Staking
-  </h2>
-
-  <p class="tools-info">
-    Depth Gauge: LS00646 050 020 &nbsp;|&nbsp; Setting Gauge: LS00646 050 024
-  </p>
-
-  <!-- DMC No -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc_st20">DMC No.</label>
-      <input type="text" id="dmc_st20" name="dmc_st20" placeholder="Enter DMC No" />
-    </div>
-  </div>
-
-  <!-- Specification & Control Limit -->
-  <p class="faded-line">Specification: 0.55 - 0.85 mm</p>
-  <p class="faded-line">Control Limit: 0.60 - 0.80 mm</p>
-
-  <!-- Repeat for each position -->
-  <!-- Pos. 311 -->
-  <div class="form-row" id="row-pos311">
-    <div class="form-control">
-      <label for="pos311">Pos. 311 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos311" name="pos311" placeholder="e.g. 0.64" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 311 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos311status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos311status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos311status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 312 -->
-  <div class="form-row" id="row-pos312">
-    <div class="form-control">
-      <label for="pos312">Pos. 312 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos312" name="pos312" placeholder="e.g. 0.64" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 312 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos312status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos312status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos312status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 411 -->
-  <div class="form-row" id="row-pos411">
-    <div class="form-control">
-      <label for="pos411">Pos. 411 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos411" name="pos411" placeholder="e.g. 0.66" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 411 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos411status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos411status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos411status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 412 -->
-  <div class="form-row" id="row-pos412">
-    <div class="form-control">
-      <label for="pos412">Pos. 412 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos412" name="pos412" placeholder="e.g. 0.66" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 412 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos412status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos412status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos412status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Gauge Info -->
-  <p class="tools-info">
-    Depth Gauge: LY09000 050 024 &nbsp;|&nbsp; Setting Gauge: LY09000 050 031
-  </p>
-
-  <!-- Pos. 531 -->
-  <div class="form-row" id="row-pos531">
-    <div class="form-control">
-      <label for="pos531">Pos. 531 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos531" name="pos531" placeholder="e.g. 0.68" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 531 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos531status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos531status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos531status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 532 -->
-  <div class="form-row" id="row-pos532">
-    <div class="form-control">
-      <label for="pos532">Pos. 532 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos532" name="pos532" placeholder="e.g. 0.66" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 532 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos532status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos532status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos532status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 541 -->
-  <div class="form-row" id="row-pos541">
-    <div class="form-control">
-      <label for="pos541">Pos. 541 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos541" name="pos541" placeholder="e.g. 0.71" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 541 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos541status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos541status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos541status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 542 -->
-  <div class="form-row" id="row-pos542">
-    <div class="form-control">
-      <label for="pos542">Pos. 542 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos542" name="pos542" placeholder="e.g. 0.71" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 542 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos542status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos542status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos542status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Visual Inspection -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label>Visual Inspection of Staking Profile on HU</label>
-      <div class="status-group">
-        <label><input type="radio" name="visualStakingST20" value="OK" /> OK</label>
-        <label><input type="radio" name="visualStakingST20" value="NOK" /> NOK</label>
-      </div>
-    </div>
-  </div>
-</section>
+          <!-- Visual Inspection -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label>Visual Inspection of Staking HU (Pos. 501 & 502)</label>
+              <div class="status-group">
+                <label>
+                  <input type="radio" name="VISUAL_STAKING_HU" value="OK" /> OK
+                </label>
+                <label>
+                  <input type="radio" name="VISUAL_STAKING_HU" value="NOK" />
+                  NOK
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section class="card">
-  <h2>
-    <span class="step-number">4.<span class="required">*</span></span>
-    ST. 25 – C-Bearing Press-In
-  </h2>
+          <h2>
+            <span class="step-number">3.<span class="required">*</span></span>
+            ST. 20 - Ball Staking
+          </h2>
 
-  <!-- Tools info -->
-  <p class="tools-info">
-    Depth Gauge: LS00646 050 033 &nbsp;|&nbsp; Setting Gauge: LY09452 050 016
-  </p>
+          <p class="tools-info">
+            Depth Gauge: LS00646 050 020 &nbsp;|&nbsp; Setting Gauge: LS00646
+            050 024
+          </p>
 
-  <!-- DMC -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc_st25_cbearing">DMC No.</label>
-      <input
-        type="text"
-        id="dmc_st25_cbearing"
-        name="dmc_st25_cbearing"
-        placeholder="Enter DMC No"
-      />
-    </div>
-  </div>
+          <!-- DMC No -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc_st20">DMC No.</label>
+              <input
+                type="text"
+                id="dmc_st20"
+                name="dmc_st20"
+                placeholder="Enter DMC No"
+              />
+            </div>
+          </div>
 
-  <!-- Pos. 221 Depth -->
-  <div class="form-row">
-    <div class="form-control">
-      <label for="pos221">Pos. 221 - Depth (mm)</label>
-      <input
-        type="number"
-        step="0.01"
-        id="pos221"
-        name="pos_221"
-        placeholder="e.g. 0.39"
-      />
-    </div>
+          <!-- Specification & Control Limit -->
+          <p class="faded-line">Specification: 0.55 - 0.85 mm</p>
+          <p class="faded-line">Control Limit: 0.60 - 0.80 mm</p>
 
-    <div class="form-control">
-      <label>Pos. 221 Status</label>
-      <div class="status-group">
-        <label>
-          <input type="radio" name="pos_221_status" value="OK" /> OK
-        </label>
-        <label>
-          <input type="radio" name="pos_221_status" value="NOK" /> NOK
-        </label>
-        <label>
-          <input type="radio" name="pos_221_status" value="NA" /> N/A
-        </label>
-      </div>
-    </div>
-  </div>
+          <!-- Repeat for each position -->
+          <!-- Pos. 311 -->
+          <div class="form-row" id="row-pos311">
+            <div class="form-control">
+              <label for="pos311">Pos. 311 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos311"
+                name="pos311"
+                placeholder="e.g. 0.64"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 311 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos311status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos311status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos311status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-  <!-- Visual Inspection -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="visual_cbearing">Visual Inspection – No damage to C-bearing</label>
-      <div class="status-group">
-        <label>
-          <input
-            type="radio"
-            name="visual_cbearing"
-            value="OK"
-          /> OK
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="visual_cbearing"
-            value="NOK"
-          /> NOK
-        </label>
-      </div>
-    </div>
-  </div>
-</section>
+          <!-- Pos. 312 -->
+          <div class="form-row" id="row-pos312">
+            <div class="form-control">
+              <label for="pos312">Pos. 312 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos312"
+                name="pos312"
+                placeholder="e.g. 0.64"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 312 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos312status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos312status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos312status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-        <section class="card">
-  <h2>
-    <span class="step-number">5.<span class="required">*</span></span>
-    ST. 25 – MV Staking
-  </h2>
+          <!-- Pos. 411 -->
+          <div class="form-row" id="row-pos411">
+            <div class="form-control">
+              <label for="pos411">Pos. 411 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos411"
+                name="pos411"
+                placeholder="e.g. 0.66"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 411 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos411status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos411status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos411status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-  <!-- Tools info -->
-  <p class="tools-info">
-    Depth Gauge: LS00800 050 007 &nbsp;|&nbsp; Setting Gauge: LY09000 050 028
-  </p>
+          <!-- Pos. 412 -->
+          <div class="form-row" id="row-pos412">
+            <div class="form-control">
+              <label for="pos412">Pos. 412 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos412"
+                name="pos412"
+                placeholder="e.g. 0.66"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 412 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos412status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos412status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos412status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-  <!-- DMC -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc_st25_mv">DMC No.</label>
-      <input type="text" id="dmc_st25_mv" name="dmc_st25_mv" placeholder="Enter DMC No" />
-    </div>
-  </div>
+          <!-- Gauge Info -->
+          <p class="tools-info">
+            Depth Gauge: LY09000 050 024 &nbsp;|&nbsp; Setting Gauge: LY09000
+            050 031
+          </p>
 
-  <!-- Specification & Control Limits -->
-  <p class="faded-line">Specification: 0.65 - 0.90 mm</p>
-  <p class="faded-line">Control Limit: 0.70 - 0.85 mm</p>
+          <!-- Pos. 531 -->
+          <div class="form-row" id="row-pos531">
+            <div class="form-control">
+              <label for="pos531">Pos. 531 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos531"
+                name="pos531"
+                placeholder="e.g. 0.68"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 531 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos531status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos531status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos531status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-  <!-- Pos. 201 -->
-  <div class="form-row" id="row-pos201">
-    <div class="form-control">
-      <label for="pos201">Pos. 201 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos201" name="pos201" placeholder="e.g. 0.76" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 201 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos201status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos201status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos201status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
+          <!-- Pos. 532 -->
+          <div class="form-row" id="row-pos532">
+            <div class="form-control">
+              <label for="pos532">Pos. 532 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos532"
+                name="pos532"
+                placeholder="e.g. 0.66"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 532 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos532status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos532status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos532status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-  <!-- Pos. 202 -->
-  <div class="form-row" id="row-pos202">
-    <div class="form-control">
-      <label for="pos202">Pos. 202 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos202" name="pos202" placeholder="e.g. 0.76" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 202 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos202status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos202status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos202status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
+          <!-- Pos. 541 -->
+          <div class="form-row" id="row-pos541">
+            <div class="form-control">
+              <label for="pos541">Pos. 541 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos541"
+                name="pos541"
+                placeholder="e.g. 0.71"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 541 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos541status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos541status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos541status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-  <!-- Pos. 211 -->
-  <div class="form-row" id="row-pos211">
-    <div class="form-control">
-      <label for="pos211">Pos. 211 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos211" name="pos211" placeholder="e.g. 0.76" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 211 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos211status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos211status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos211status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
+          <!-- Pos. 542 -->
+          <div class="form-row" id="row-pos542">
+            <div class="form-control">
+              <label for="pos542">Pos. 542 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos542"
+                name="pos542"
+                placeholder="e.g. 0.71"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 542 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos542status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos542status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos542status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
 
-  <!-- Pos. 212 -->
-  <div class="form-row" id="row-pos212">
-    <div class="form-control">
-      <label for="pos212">Pos. 212 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos212" name="pos212" placeholder="e.g. 0.77" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 212 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos212status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos212status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos212status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Visual Inspection -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label>Visual Inspection of Staking Profile on HU</label>
-      <div class="status-group">
-        <label><input type="radio" name="visualStakingMV" value="OK" /> OK</label>
-        <label><input type="radio" name="visualStakingMV" value="NOK" /> NOK</label>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-        <section class="card">
-  <h2>
-    <span class="step-number">6.<span class="required">*</span></span>
-    ST. 30 – Motor Staking
-  </h2>
-
-  <p class="tools-info">
-    Depth Gauge: LS00646 050 037 &nbsp;|&nbsp; Setting Gauge: LY09452 050 010
-  </p>
-
-  <!-- DMC Input -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc_st30">DMC No.</label>
-      <input type="text" id="dmc_st30" name="dmc_st30" placeholder="Enter DMC No" />
-    </div>
-  </div>
-
-  <p class="faded-line">Specification: 0.50 - 1.40 mm</p>
-  <p class="faded-line">Control Limit: 0.65 - 1.30 mm</p>
-
-  <!-- Pos. 222 -->
-  <div class="form-row">
-    <div class="form-control">
-      <label for="pos222">Pos. 222 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos222" name="pos222" placeholder="e.g. 0.98" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 222 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos222_status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos222_status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos222_status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 223 -->
-  <div class="form-row">
-    <div class="form-control">
-      <label for="pos223">Pos. 223 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos223" name="pos223" placeholder="e.g. 0.96" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 223 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos223_status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos223_status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos223_status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 224 -->
-  <div class="form-row">
-    <div class="form-control">
-      <label for="pos224">Pos. 224 - Depth (mm)</label>
-      <input type="number" step="0.01" id="pos224" name="pos224" placeholder="e.g. 0.94" />
-    </div>
-    <div class="form-control">
-      <label>Pos. 224 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos224_status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos224_status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos224_status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Visual Inspection -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label>Visual Inspection of Staking Profile on HU</label>
-      <div class="status-group">
-        <label><input type="radio" name="visual_staking_st30" value="OK" /> OK</label>
-        <label><input type="radio" name="visual_staking_st30" value="NOK" /> NOK</label>
-        <label><input type="radio" name="visual_staking_st30" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-</section>
-
-        <section class="card">
-  <h2>
-    <span class="step-number">7.<span class="required">*</span></span>
-    ST. 40 – Staking PE-AV
-  </h2>
-
-  <p class="tools-info">
-    Depth Gauge: LS00646 050 034 &nbsp;|&nbsp; Setting Gauge: LY09452 050 010
-  </p>
-
-  <!-- DMC -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc_st40">DMC No.</label>
-      <input
-        type="text"
-        id="dmc_st40"
-        name="dmc_st40"
-        placeholder="Enter DMC No"
-      />
-    </div>
-  </div>
-
-  <p class="faded-line">Specification: 0.37 - 0.60 mm</p>
-  <p class="faded-line">Control Limit: 0.40 - 0.56 mm</p>
-
-  <!-- Pos. 301 -->
-  <div class="form-row" id="row-pos301">
-    <div class="form-control">
-      <label for="pos301">Pos. 301 - Depth (mm)</label>
-      <input
-        type="number"
-        step="0.01"
-        id="pos301"
-        name="pos301"
-        placeholder="e.g. 0.31"
-      />
-    </div>
-
-    <div class="form-control">
-      <label>Pos. 301 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos301status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos301status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos301status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pos. 401 -->
-  <div class="form-row" id="row-pos401">
-    <div class="form-control">
-      <label for="pos401">Pos. 401 - Depth (mm)</label>
-      <input
-        type="number"
-        step="0.01"
-        id="pos401"
-        name="pos401"
-        placeholder="e.g. 0.32"
-      />
-    </div>
-
-    <div class="form-control">
-      <label>Pos. 401 Status</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos401status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos401status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos401status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- Visual Inspection -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label>Visual Inspection of Staking Profile on HU</label>
-      <div class="status-group">
-        <label><input type="radio" name="visualStakingST40" value="OK" /> OK</label>
-        <label><input type="radio" name="visualStakingST40" value="NOK" /> NOK</label>
-      </div>
-    </div>
-  </div>
-</section>
-
+          <!-- Visual Inspection -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label>Visual Inspection of Staking Profile on HU</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="visualStakingST20" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="visualStakingST20" value="NOK" />
+                  NOK</label
+                >
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section class="card">
-  <h2>
-    <span class="step-number">8.<span class="required">*</span></span>
-    ST. 45 – Torquing ECU Screws
-  </h2>
+          <h2>
+            <span class="step-number">4.<span class="required">*</span></span>
+            ST. 25 – C-Bearing Press-In
+          </h2>
 
-  <!-- DMC Input -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc_st45">DMC No.</label>
-      <input
-        type="text"
-        id="dmc_st45"
-        name="dmc_st45"
-        placeholder="Enter DMC No"
-      />
-    </div>
-  </div>
+          <!-- Tools info -->
+          <p class="tools-info">
+            Depth Gauge: LS00646 050 033 &nbsp;|&nbsp; Setting Gauge: LY09452
+            050 016
+          </p>
 
-  <!-- Visual Check for ECU Screw Head Damage -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label>No Damage to Head of ECU Screws After Torquing</label>
-      <div class="status-group">
-        <label><input type="radio" name="ecuScrewDamage" value="OK" /> OK</label>
-        <label><input type="radio" name="ecuScrewDamage" value="NOK" /> NOK</label>
-        <label><input type="radio" name="ecuScrewDamage" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
+          <!-- DMC -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc_st25_cbearing">DMC No.</label>
+              <input
+                type="text"
+                id="dmc_st25_cbearing"
+                name="dmc_st25_cbearing"
+                placeholder="Enter DMC No"
+              />
+            </div>
+          </div>
 
-  <!-- Pos. 231 -->
-  <div class="form-row" id="row-pos231">
-    <div class="form-control full-width">
-      <label>Pos. 231</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos231status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos231status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos231status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
+          <!-- Pos. 221 Depth -->
+          <div class="form-row">
+            <div class="form-control">
+              <label for="pos221">Pos. 221 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos221"
+                name="pos_221"
+                placeholder="e.g. 0.39"
+              />
+            </div>
 
-  <!-- Pos. 232 -->
-  <div class="form-row" id="row-pos232">
-    <div class="form-control full-width">
-      <label>Pos. 232</label>
-      <div class="status-group">
-        <label><input type="radio" name="pos232status" value="OK" /> OK</label>
-        <label><input type="radio" name="pos232status" value="NOK" /> NOK</label>
-        <label><input type="radio" name="pos232status" value="NA" /> N/A</label>
-      </div>
-    </div>
-  </div>
-</section>
+            <div class="form-control">
+              <label>Pos. 221 Status</label>
+              <div class="status-group">
+                <label>
+                  <input type="radio" name="pos_221_status" value="OK" /> OK
+                </label>
+                <label>
+                  <input type="radio" name="pos_221_status" value="NOK" /> NOK
+                </label>
+                <label>
+                  <input type="radio" name="pos_221_status" value="NA" /> N/A
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual Inspection -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="visual_cbearing"
+                >Visual Inspection – No damage to C-bearing</label
+              >
+              <div class="status-group">
+                <label>
+                  <input type="radio" name="visual_cbearing" value="OK" /> OK
+                </label>
+                <label>
+                  <input type="radio" name="visual_cbearing" value="NOK" /> NOK
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section class="card">
-  <h2>
-    <span class="step-number">9.<span class="required">*</span></span>
-    ST. 85 – Tape Application
-  </h2>
+          <h2>
+            <span class="step-number">5.<span class="required">*</span></span>
+            ST. 25 – MV Staking
+          </h2>
 
-  <!-- DMC No. -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="dmc_st85">DMC No.</label>
-      <input
-        type="text"
-        id="dmc_st85"
-        name="dmc_st85"
-        placeholder="Enter DMC No"
-      />
-    </div>
-  </div>
+          <!-- Tools info -->
+          <p class="tools-info">
+            Depth Gauge: LS00800 050 007 &nbsp;|&nbsp; Setting Gauge: LY09000
+            050 028
+          </p>
 
-  <!-- Visual Check -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label>No Damage to ECU Housing (Pins of Customer Connector)</label>
-      <div class="status-group">
-        <label>
-          <input type="radio" name="ecuHousingDamage" value="OK" />
-          OK
-        </label>
-        <label>
-          <input type="radio" name="ecuHousingDamage" value="NOK" />
-          NOK
-        </label>
-        <label>
-          <input type="radio" name="ecuHousingDamage" value="NA" />
-          N/A
-        </label>
+          <!-- DMC -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc_st25_mv">DMC No.</label>
+              <input
+                type="text"
+                id="dmc_st25_mv"
+                name="dmc_st25_mv"
+                placeholder="Enter DMC No"
+              />
+            </div>
+          </div>
+
+          <!-- Specification & Control Limits -->
+          <p class="faded-line">Specification: 0.65 - 0.90 mm</p>
+          <p class="faded-line">Control Limit: 0.70 - 0.85 mm</p>
+
+          <!-- Pos. 201 -->
+          <div class="form-row" id="row-pos201">
+            <div class="form-control">
+              <label for="pos201">Pos. 201 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos201"
+                name="pos201"
+                placeholder="e.g. 0.76"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 201 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos201status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos201status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos201status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 202 -->
+          <div class="form-row" id="row-pos202">
+            <div class="form-control">
+              <label for="pos202">Pos. 202 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos202"
+                name="pos202"
+                placeholder="e.g. 0.76"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 202 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos202status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos202status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos202status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 211 -->
+          <div class="form-row" id="row-pos211">
+            <div class="form-control">
+              <label for="pos211">Pos. 211 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos211"
+                name="pos211"
+                placeholder="e.g. 0.76"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 211 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos211status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos211status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos211status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 212 -->
+          <div class="form-row" id="row-pos212">
+            <div class="form-control">
+              <label for="pos212">Pos. 212 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos212"
+                name="pos212"
+                placeholder="e.g. 0.77"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 212 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos212status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos212status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos212status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual Inspection -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label>Visual Inspection of Staking Profile on HU</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="visualStakingMV" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="visualStakingMV" value="NOK" />
+                  NOK</label
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>
+            <span class="step-number">6.<span class="required">*</span></span>
+            ST. 30 – Motor Staking
+          </h2>
+
+          <p class="tools-info">
+            Depth Gauge: LS00646 050 037 &nbsp;|&nbsp; Setting Gauge: LY09452
+            050 010
+          </p>
+
+          <!-- DMC Input -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc_st30">DMC No.</label>
+              <input
+                type="text"
+                id="dmc_st30"
+                name="dmc_st30"
+                placeholder="Enter DMC No"
+              />
+            </div>
+          </div>
+
+          <p class="faded-line">Specification: 0.50 - 1.40 mm</p>
+          <p class="faded-line">Control Limit: 0.65 - 1.30 mm</p>
+
+          <!-- Pos. 222 -->
+          <div class="form-row">
+            <div class="form-control">
+              <label for="pos222">Pos. 222 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos222"
+                name="pos222"
+                placeholder="e.g. 0.98"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 222 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos222_status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos222_status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos222_status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 223 -->
+          <div class="form-row">
+            <div class="form-control">
+              <label for="pos223">Pos. 223 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos223"
+                name="pos223"
+                placeholder="e.g. 0.96"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 223 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos223_status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos223_status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos223_status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 224 -->
+          <div class="form-row">
+            <div class="form-control">
+              <label for="pos224">Pos. 224 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos224"
+                name="pos224"
+                placeholder="e.g. 0.94"
+              />
+            </div>
+            <div class="form-control">
+              <label>Pos. 224 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos224_status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos224_status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos224_status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual Inspection -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label>Visual Inspection of Staking Profile on HU</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="visual_staking_st30" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="visual_staking_st30" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="visual_staking_st30" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>
+            <span class="step-number">7.<span class="required">*</span></span>
+            ST. 40 – Staking PE-AV
+          </h2>
+
+          <p class="tools-info">
+            Depth Gauge: LS00646 050 034 &nbsp;|&nbsp; Setting Gauge: LY09452
+            050 010
+          </p>
+
+          <!-- DMC -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc_st40">DMC No.</label>
+              <input
+                type="text"
+                id="dmc_st40"
+                name="dmc_st40"
+                placeholder="Enter DMC No"
+              />
+            </div>
+          </div>
+
+          <p class="faded-line">Specification: 0.37 - 0.60 mm</p>
+          <p class="faded-line">Control Limit: 0.40 - 0.56 mm</p>
+
+          <!-- Pos. 301 -->
+          <div class="form-row" id="row-pos301">
+            <div class="form-control">
+              <label for="pos301">Pos. 301 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos301"
+                name="pos301"
+                placeholder="e.g. 0.31"
+              />
+            </div>
+
+            <div class="form-control">
+              <label>Pos. 301 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos301status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos301status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos301status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 401 -->
+          <div class="form-row" id="row-pos401">
+            <div class="form-control">
+              <label for="pos401">Pos. 401 - Depth (mm)</label>
+              <input
+                type="number"
+                step="0.01"
+                id="pos401"
+                name="pos401"
+                placeholder="e.g. 0.32"
+              />
+            </div>
+
+            <div class="form-control">
+              <label>Pos. 401 Status</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos401status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos401status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos401status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual Inspection -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label>Visual Inspection of Staking Profile on HU</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="visualStakingST40" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="visualStakingST40" value="NOK" />
+                  NOK</label
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>
+            <span class="step-number">8.<span class="required">*</span></span>
+            ST. 45 – Torquing ECU Screws
+          </h2>
+
+          <!-- DMC Input -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc_st45">DMC No.</label>
+              <input
+                type="text"
+                id="dmc_st45"
+                name="dmc_st45"
+                placeholder="Enter DMC No"
+              />
+            </div>
+          </div>
+
+          <!-- Visual Check for ECU Screw Head Damage -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label>No Damage to Head of ECU Screws After Torquing</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="ecuScrewDamage" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="ecuScrewDamage" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="ecuScrewDamage" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 231 -->
+          <div class="form-row" id="row-pos231">
+            <div class="form-control full-width">
+              <label>Pos. 231</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos231status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos231status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos231status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Pos. 232 -->
+          <div class="form-row" id="row-pos232">
+            <div class="form-control full-width">
+              <label>Pos. 232</label>
+              <div class="status-group">
+                <label
+                  ><input type="radio" name="pos232status" value="OK" />
+                  OK</label
+                >
+                <label
+                  ><input type="radio" name="pos232status" value="NOK" />
+                  NOK</label
+                >
+                <label
+                  ><input type="radio" name="pos232status" value="NA" />
+                  N/A</label
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>
+            <span class="step-number">9.<span class="required">*</span></span>
+            ST. 85 – Tape Application
+          </h2>
+
+          <!-- DMC No. -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="dmc_st85">DMC No.</label>
+              <input
+                type="text"
+                id="dmc_st85"
+                name="dmc_st85"
+                placeholder="Enter DMC No"
+              />
+            </div>
+          </div>
+
+          <!-- Visual Check -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label
+                >No Damage to ECU Housing (Pins of Customer Connector)</label
+              >
+              <div class="status-group">
+                <label>
+                  <input type="radio" name="ecuHousingDamage" value="OK" />
+                  OK
+                </label>
+                <label>
+                  <input type="radio" name="ecuHousingDamage" value="NOK" />
+                  NOK
+                </label>
+                <label>
+                  <input type="radio" name="ecuHousingDamage" value="NA" />
+                  N/A
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>
+            <span class="step-number">10.<span class="required">*</span></span>
+            Checked By
+          </h2>
+
+          <!-- Checked By -->
+          <div class="form-row">
+            <div class="form-control full-width">
+              <label for="checkedBy">Checked By (Enter Full Name)</label>
+              <input
+                type="text"
+                id="checkedBy"
+                name="checkedBy"
+                placeholder="Full name of person checking"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-row">
+            <button type="submit">Submit</button>
+          </div>
+        </section>
       </div>
-    </div>
-  </div>
-</section>
+<style>
+/* Overlay background */
+.custom-alert-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
-       <section class="card">
-  <h2>
-    <span class="step-number">10.<span class="required">*</span></span>
-    Checked By
-  </h2>
+/* Alert box */
+.custom-alert-box {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeInScale 0.3s ease forwards;
+  max-width: 300px;
+  width: 100%;
+}
 
-  <!-- Checked By -->
-  <div class="form-row">
-    <div class="form-control full-width">
-      <label for="checkedBy">Checked By (Enter Full Name)</label>
-      <input
-        type="text"
-        id="checkedBy"
-        name="checkedBy"
-        placeholder="Full name of person checking"
-        required
-      />
-    </div>
-  </div>
+/* Success icon */
+.custom-alert-box .icon {
+  font-size: 40px;
+  color: #28a745;
+  margin-bottom: 10px;
+}
 
-  <!-- Submit Button -->
-  <div class="form-row">
-    <button type="submit">Submit</button>
-  </div>
-</section>
+/* Text */
+.custom-alert-box p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
 
+/* Fade-in animation */
+@keyframes fadeInScale {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Make all fields required
+  document
+    .querySelectorAll("form input, form select, form textarea")
+    .forEach((field) => (field.required = true));
+
+  // Custom alert function
+  function showCustomAlert(message) {
+    const overlay = document.createElement("div");
+    overlay.className = "custom-alert-overlay";
+    overlay.innerHTML = `
+      <div class="custom-alert-box">
+        <div class="icon">✅</div>
+        <p>${message}</p>
       </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Auto close after 2 seconds
+    setTimeout(() => {
+      overlay.remove();
+    }, 2000);
+  }
+
+  // Show alert on successful submission
+  document.querySelector("form").addEventListener("submit", function (e) {
+    if (this.checkValidity()) {
+      e.preventDefault(); // Remove to actually submit
+      showCustomAlert("Form submitted successfully!");
+    }
+  });
+});
+</script>
     </form>
   </body>
 </html>

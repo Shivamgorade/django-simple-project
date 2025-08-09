@@ -6,3 +6,115 @@
     <a href="/">Submit Another</a>
 </body>
 </html>
+<!-- ST-45 Section -->
+<div class="card-container-custom">
+    <div class="card-section-custom">
+        <div class="card-header-custom">ST-45 Inspection</div>
+        <div class="field-box-custom">
+            <div class="field-label-custom">231:</div>
+            <div id="status-231" class="status-ok-custom">Loading...</div>
+        </div>
+        <div class="field-box-custom">
+            <div class="field-label-custom">232:</div>
+            <div id="status-232" class="status-ok-custom">Loading...</div>
+        </div>
+        <div class="field-box-custom">
+            <div class="field-label-custom">No Damage to Head of ECU Screws After Torquing:</div>
+            <div id="status-ecu-screws" class="status-ok-custom">Loading...</div>
+        </div>
+    </div>
+
+    <!-- ST-85 Section -->
+    <div class="card-section-custom">
+        <div class="card-header-custom">ST-85 Inspection</div>
+        <div class="field-box-custom">
+            <div class="field-label-custom">No Damage to ECU Housing (Pins of Customer Connector):</div>
+            <div id="status-ecu-housing" class="status-ok-custom">Loading...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+  async function loadInspectionStatus() {
+    const date = document.getElementById('filter-date').value;
+    const line = document.getElementById('filter-line').value;
+    const shift = document.getElementById('filter-shift').value;
+
+    if (!date || !line || !shift) return;
+
+    try {
+      const response = await fetch(`/api/inspection-status/?date=${date}&line=${encodeURIComponent(line)}&shift=${encodeURIComponent(shift)}`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+
+      // Update card values
+      document.getElementById('status-231').textContent = data['231'] || 'N/A';
+      document.getElementById('status-232').textContent = data['232'] || 'N/A';
+      document.getElementById('status-ecu-screws').textContent = data['No Damage to Head of ECU Screws After Torquing'] || 'N/A';
+      document.getElementById('status-ecu-housing').textContent = data['No Damage to ECU Housing (Pins of Customer Connector)'] || 'N/A';
+
+      // Optional: color update based on OK/NOK
+      ['231', '232', 'No Damage to Head of ECU Screws After Torquing', 'No Damage to ECU Housing (Pins of Customer Connector)'].forEach(key => {
+        const elId = key === 'No Damage to Head of ECU Screws After Torquing' ? 'status-ecu-screws' :
+                     key === 'No Damage to ECU Housing (Pins of Customer Connector)' ? 'status-ecu-housing' :
+                     `status-${key}`;
+        const el = document.getElementById(elId);
+        if (el) {
+          el.className = data[key]?.toUpperCase() === 'OK' ? 'status-ok-custom' : 'status-nok-custom';
+        }
+      });
+    } catch (error) {
+      console.error('Error loading inspection status:', error);
+    }
+  }
+
+  // Load on filter change
+  document.getElementById('filter-date').addEventListener('change', loadInspectionStatus);
+  document.getElementById('filter-line').addEventListener('change', loadInspectionStatus);
+  document.getElementById('filter-shift').addEventListener('change', loadInspectionStatus);
+</script>
+from django.http import JsonResponse
+import pandas as pd
+from django.views.decorators.csrf import csrf_exempt
+import os
+
+@csrf_exempt
+def inspection_status_api(request):
+    date = request.GET.get('date')
+    line = request.GET.get('line')
+    shift = request.GET.get('shift')
+
+    if not (date and line and shift):
+        return JsonResponse({'error': 'Missing filters'}, status=400)
+
+    file_path = os.path.join('myapp', 'data', 'checksheet_data.xlsx')
+    try:
+        df = pd.read_excel(file_path, header=2)  # 3rd row as header
+        df.columns = df.columns.str.strip()  # Clean column names
+        df['LINE NO'] = df['LINE NO'].astype(str).str.strip()
+        df['SHIFT'] = df['SHIFT'].astype(str).str.strip()
+        df['DATE'] = pd.to_datetime(df['DATE']).dt.strftime('%Y-%m-%d')
+
+        filtered = df[
+            (df['DATE'] == date) &
+            (df['LINE NO'] == line) &
+            (df['SHIFT'] == shift)
+        ]
+
+        if filtered.empty:
+            return JsonResponse({'error': 'No data found'}, status=404)
+
+        row = filtered.iloc[0]
+
+        response_data = {
+           '231': row.get('Pos. 231 Status', 'N/A'),
+            '232': row.get('232', 'N/A'),
+            'No Damage to Head of ECU Screws After Torquing': row.get('No Damage to Head of ECU Screws After Torquing', 'N/A'),
+            'No Damage to ECU Housing (Pins of Customer Connector)': row.get('No Damage to ECU Housing (Pins of Customer Connector)', 'N/A'),
+        }
+
+        return JsonResponse(response_data)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+ path('api/inspection-status/', views.inspection_status_api, name='inspection-status-api'),

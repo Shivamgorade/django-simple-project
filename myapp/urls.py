@@ -12,8 +12,14 @@ urlpatterns = [
     path('api/chart-data-st25mv/', views.get_filtered_chart_data_st25mv, name='chart_data_st25mv'),
     path('api/chart-data-st30/', views.get_filtered_chart_data_st30, name='chart_data_st30'),
     path('api/chart-data-st40/', views.get_filtered_chart_data_st40, name='chart_data_st40'),
-     path("api/info-card-data/", views.info_card_api, name="info_card_api"),
-     path('api/total-inspections/', views.total_inspections_api, name='total_inspections'),
+    path("api/info-card-data/", views.info_card_api, name="info_card_api"),
+    path('api/total-inspections/', views.total_inspections_api, name='total_inspections'),
+    path("api/st45-st85-data/", views.st45_st85_data_api, name="st45_st85_data_api"),
+
+
+    
+
+
      
 
 ]
