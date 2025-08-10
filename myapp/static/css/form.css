@@ -4,36 +4,43 @@ form {
   padding: 20px;
   border-radius: 10px;
   background: #f8f8f8;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
 h1 {
   text-align: center;
 }
 
 body {
   margin: 0;
-
   font-family: "Segoe UI", sans-serif;
-
-    background: linear-gradient(to right, #e0e7ff, #f0f5ff);
-
+  background: linear-gradient(to right, #e0e7ff, #f0f5ff);
   color: #333;
+  line-height: 1.6;
 }
 
 /* HEADER STYLING */
 header {
-  color: red;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 18px 28px;
+  padding: 24px 40px;
   background: linear-gradient(90deg, #ffffff, #f4f6f9);
-  border-bottom: 2px solid #e0e6ed;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-bottom: 3px solid #c8102e;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-bottom: 30px;
 }
 
 /* Left section: Title + version */
+/* Left: Title + version */
 .header-left {
   display: flex;
   flex-direction: column;
@@ -41,59 +48,56 @@ header {
 
 .header-left h1 {
   margin: 0;
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-size: 34px;
+  font-weight: 800;
+  color: #b30000;
 }
 
 .header-left p {
-  margin: 4px 0 0;
-  font-size: 13px;
+  margin: 5px 0 0;
+  font-size: 15px;
   color: #6b7280;
 }
 
-/* Right section: Dashboard + BOSCH logo */
+/* Right: Logo + dashboard button */
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* BOSCH logo style */
 .bosch-logo {
-  font-size: 26px;
-  font-weight: 800;
-  color: #c8102e; /* Bosch red */
-  letter-spacing: 1px;
+  font-size: 32px;
+  font-weight: 900;
+  color: #c8102e;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: transform 0.3s ease;
 }
 
-/* Dashboard button styling */
+.bosch-logo:hover {
+  transform: scale(1.05);
+}
+
 .dashboard-btn {
   background: linear-gradient(135deg, #004080, #0059b3);
   color: #ffffff;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 15px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(0, 64, 128, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 64, 128, 0.2);
 }
 
 .dashboard-btn:hover {
   background: linear-gradient(135deg, #0059b3, #0066cc);
   transform: translateY(-1px);
-  box-shadow: 0 5px 12px rgba(0, 64, 128, 0.25);
+  box-shadow: 0 6px 14px rgba(0, 64, 128, 0.25);
 }
 
-.container {
-  
-  max-width: 960px;
 
-  margin: 0 auto;
-
-  padding: 20px;
-}
 
 .step-number {
   font-weight: 2px;
@@ -119,21 +123,6 @@ input[type="number"].invalid {
   color: red !important;
 }
 
-header {
-  text-align: center;
-
-  margin-bottom: 30px;
-}
-
-header h1 {
-  margin: 0;
-
-  color: #c00;
-}
-
-header p {
-  color: #666;
-}
 
 .card {
   background: #fff;

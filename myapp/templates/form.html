@@ -12,13 +12,15 @@
     <title>ABS10M First Piece Inspection</title>
   </head>
 
-  <script>
+  {% comment %} <script>
     document.addEventListener("DOMContentLoaded", function () {
       document
         .querySelectorAll("form input, form select, form textarea")
         .forEach((field) => (field.required = true));
     });
-  </script>
+  </script> {% endcomment %}
+
+
 
     <form method="POST">
       {% csrf_token %}
@@ -1263,85 +1265,25 @@
           </div>
         </section>
       </div>
-<style>
-/* Overlay background */
-.custom-alert-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
+      {% comment %} <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Make all fields required
+          document
+            .querySelectorAll("form input, form select, form textarea")
+            .forEach((field) => (field.required = true));
 
-/* Alert box */
-.custom-alert-box {
-  background: #fff;
-  padding: 20px 30px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  animation: fadeInScale 0.3s ease forwards;
-  max-width: 300px;
-  width: 100%;
-}
-
-/* Success icon */
-.custom-alert-box .icon {
-  font-size: 40px;
-  color: #28a745;
-  margin-bottom: 10px;
-}
-
-/* Text */
-.custom-alert-box p {
-  margin: 0;
-  font-size: 16px;
-  color: #333;
-}
-
-/* Fade-in animation */
-@keyframes fadeInScale {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  // Make all fields required
-  document
-    .querySelectorAll("form input, form select, form textarea")
-    .forEach((field) => (field.required = true));
-
-  // Custom alert function
-  function showCustomAlert(message) {
-    const overlay = document.createElement("div");
-    overlay.className = "custom-alert-overlay";
-    overlay.innerHTML = `
-      <div class="custom-alert-box">
-        <div class="icon">✅</div>
-        <p>${message}</p>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-
-    // Auto close after 2 seconds
-    setTimeout(() => {
-      overlay.remove();
-    }, 2000);
-  }
-
-  // Show alert on successful submission
-  document.querySelector("form").addEventListener("submit", function (e) {
-    if (this.checkValidity()) {
-      e.preventDefault(); // Remove to actually submit
-      showCustomAlert("Form submitted successfully!");
-    }
-  });
-});
-</script>
+          // Show alert on successful submission
+          document
+            .querySelector("form")
+            .addEventListener("submit", function (e) {
+              if (this.checkValidity()) {
+                // Only show if form is valid
+                e.preventDefault(); // Remove this if you want real submission
+                alert("✅ Form submitted successfully!");
+              }
+            });
+        });
+      </script> {% endcomment %}
     </form>
   </body>
 </html>
